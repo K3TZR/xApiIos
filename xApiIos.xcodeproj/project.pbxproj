@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		9113BB81258AAC9200BB1080 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9113BB80258AAC9200BB1080 /* NetworkExtension.framework */; };
 		9113BB8B258E54CA00BB1080 /* SecondaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9113BB8A258E54CA00BB1080 /* SecondaryView.swift */; };
+		9113BB9F258FADDE00BB1080 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 9113BB9E258FADDE00BB1080 /* README.md */; };
 		9122DBD92586BA4A005D57ED /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9122DBD82586BA4A005D57ED /* AppDelegate.swift */; };
 		9122DBDB2586BA4A005D57ED /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9122DBDA2586BA4A005D57ED /* SceneDelegate.swift */; };
 		9122DBDF2586BA4B005D57ED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9122DBDE2586BA4B005D57ED /* Assets.xcassets */; };
@@ -31,6 +32,7 @@
 		9113BB7D258AAC6B00BB1080 /* xApiIos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = xApiIos.entitlements; sourceTree = "<group>"; };
 		9113BB80258AAC9200BB1080 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		9113BB8A258E54CA00BB1080 /* SecondaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryView.swift; sourceTree = "<group>"; };
+		9113BB9E258FADDE00BB1080 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		9122DBD52586BA4A005D57ED /* xApiIos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = xApiIos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9122DBD82586BA4A005D57ED /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9122DBDA2586BA4A005D57ED /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -74,6 +76,7 @@
 		9122DBCC2586BA4A005D57ED = {
 			isa = PBXGroup;
 			children = (
+				9113BB9E258FADDE00BB1080 /* README.md */,
 				9122DBD72586BA4A005D57ED /* xApiIos */,
 				9122DBD62586BA4A005D57ED /* Products */,
 				9113BB7F258AAC9200BB1080 /* Frameworks */,
@@ -202,6 +205,7 @@
 			files = (
 				9122DBE52586BA4B005D57ED /* LaunchScreen.storyboard in Resources */,
 				9122DBE22586BA4B005D57ED /* Preview Assets.xcassets in Resources */,
+				9113BB9F258FADDE00BB1080 /* README.md in Resources */,
 				9122DBDF2586BA4B005D57ED /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
