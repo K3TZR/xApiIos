@@ -1,0 +1,52 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "CocoaAsyncSocket",
+        "repositoryURL": "https://github.com/robbiehanson/CocoaAsyncSocket",
+        "state": {
+          "branch": null,
+          "revision": "dbdc00669c1ced63b27c3c5f052ee4d28f10150c",
+          "version": "7.6.5"
+        }
+      },
+      {
+        "package": "SwiftyUserDefaults",
+        "repositoryURL": "https://github.com/sunshinejr/SwiftyUserDefaults.git",
+        "state": {
+          "branch": null,
+          "revision": "28c8805314e67683f727c3376e69cbd4b8b590bb",
+          "version": "5.1.0"
+        }
+      },
+      {
+        "package": "XCGLogger",
+        "repositoryURL": "https://github.com/DaveWoodCom/XCGLogger.git",
+        "state": {
+          "branch": null,
+          "revision": "a9c4667b247928a29bdd41be2ec2c8d304215a54",
+          "version": "7.0.1"
+        }
+      },
+      {
+        "package": "xClientIos",
+        "repositoryURL": "https://github.com/K3TZR/xClientIos.git",
+        "state": {
+          "branch": null,
+          "revision": "52389a22996db7f594225ea4d3fd4fc83a07d448",
+          "version": "0.9.3"
+        }
+      },
+      {
+        "package": "xLib6000",
+        "repositoryURL": "https://github.com/K3TZR/xLib6000.git",
+        "state": {
+          "branch": null,
+          "revision": "972861c4d3d47f5901c5f3b46286bf9b0bee14d0",
+          "version": "1.6.7"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
