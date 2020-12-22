@@ -19,7 +19,8 @@ struct FilterView: View {
                     ForEach(FilterMessages.allCases, id: \.self) {
                         Text($0.rawValue)
                     }
-                }.frame(width: 100, height: 20, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                }
+//                .frame(width: 100, height: 20, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 
             } else {
                 Text("Filter objects by")
@@ -27,15 +28,16 @@ struct FilterView: View {
                     ForEach(FilterObjects.allCases, id: \.self) {
                         Text($0.rawValue)
                     }
-                }.frame(width: 100, height: 20, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                }
+//                .frame(width: 100, height: 20, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 
             }
             TextField("Filter text", text: filterType == .messages ? $tester.messagesFilterText : $tester.objectsFilterText)
               .background(Color(.secondarySystemBackground))
-              .frame(width: 200, alignment: .leading)
+//              .frame(width: 200, alignment: .leading)
         }
         .pickerStyle(MenuPickerStyle())
-        .padding(10)
+//        .padding(10)
         //    .border(Color.gray, width: 0.5)
     }
 }

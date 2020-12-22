@@ -11,27 +11,45 @@ import SwiftUI
 struct BottomButtonsView: View {
     @EnvironmentObject var tester : Tester
     
+    let buttonWidth : CGFloat = 70
+    let toggleWidth : CGFloat = 215
+    
     var body: some View {
         
-        VStack(alignment: .leading, spacing: 0, content: {
-            HStack (spacing: 10){
-                Text("Clear on -->").frame(width: 100, alignment: .leading)
-                Toggle("Connect", isOn: $tester.clearAtConnect).frame(width: 130, alignment: .leading)
-                Toggle("Disconnect", isOn: $tester.clearAtDisconnect).frame(width: 150, alignment: .leading)
+        VStack(alignment: .leading) {
+            HStack  {
+                Stepper("Font Size", value: $tester.fontSize, in: 8...24).frame(width: 175)
+                
                 Spacer()
-//                Toggle("Log Window", isOn: $tester.showLogWindow).frame(width: 160, alignment: .leading)
-//                Spacer()
-                Button(action: {}) {Text("Clear")}
+                
+                Toggle(isOn: $tester.clearAtConnect) {
+                    Text("Clear on Connect").frame(maxWidth: .infinity, alignment: .trailing)
+                }.frame(maxWidth: 150, alignment: .trailing)
+                
+                Spacer()
+                
+                Toggle(isOn: $tester.clearAtDisconnect) {
+                    Text("Clear on Disconnect").frame(maxWidth: .infinity, alignment: .trailing)
+                }.frame(maxWidth: 150, alignment: .trailing)
+                
+                Spacer()
+                
+                Button(action: {tester.clearObjectsAndMessages()}) {Text("Clear Now")}
+                
+                Spacer()
+                
+                Button(action: {tester.showLogWindow.toggle()}) {
+                    Text("Log View").frame(width: buttonWidth)
+                }
             }
-        })
-        .padding(.horizontal, 20)
-        //    .border(Color(.textColor))
+        }
     }
 }
 
 struct BottomButtonsView_Previews: PreviewProvider {
     static var previews: some View {
         BottomButtonsView()
-                .environmentObject(Tester())
+            .environmentObject(Tester())
+            .previewLayout(.fixed(width: 2160 / 2.0, height: 1620 / 2.0))
     }
 }

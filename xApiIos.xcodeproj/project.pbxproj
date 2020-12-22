@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		9113BB81258AAC9200BB1080 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9113BB80258AAC9200BB1080 /* NetworkExtension.framework */; };
-		9113BB8B258E54CA00BB1080 /* SecondaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9113BB8A258E54CA00BB1080 /* SecondaryView.swift */; };
 		9113BB9F258FADDE00BB1080 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 9113BB9E258FADDE00BB1080 /* README.md */; };
 		9122DBD92586BA4A005D57ED /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9122DBD82586BA4A005D57ED /* AppDelegate.swift */; };
 		9122DBDB2586BA4A005D57ED /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9122DBDA2586BA4A005D57ED /* SceneDelegate.swift */; };
@@ -31,7 +30,6 @@
 /* Begin PBXFileReference section */
 		9113BB7D258AAC6B00BB1080 /* xApiIos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = xApiIos.entitlements; sourceTree = "<group>"; };
 		9113BB80258AAC9200BB1080 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
-		9113BB8A258E54CA00BB1080 /* SecondaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryView.swift; sourceTree = "<group>"; };
 		9113BB9E258FADDE00BB1080 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		9122DBD52586BA4A005D57ED /* xApiIos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = xApiIos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9122DBD82586BA4A005D57ED /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -50,6 +48,7 @@
 		9122DC2D258701AA005D57ED /* MessagesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MessagesView.swift; path = SubViews/MessagesView.swift; sourceTree = "<group>"; };
 		9122DC3025870293005D57ED /* BottomButtonsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BottomButtonsView.swift; path = SubViews/BottomButtonsView.swift; sourceTree = "<group>"; };
 		9122DC342587B176005D57ED /* AppExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppExtensions.swift; sourceTree = "<group>"; };
+		91CCF42925902D4C0063757A /* xClientIos */ = {isa = PBXFileReference; lastKnownFileType = folder; name = xClientIos; path = ../xClientIos; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +75,7 @@
 		9122DBCC2586BA4A005D57ED = {
 			isa = PBXGroup;
 			children = (
+				91CCF42925902D4C0063757A /* xClientIos */,
 				9113BB9E258FADDE00BB1080 /* README.md */,
 				9122DBD72586BA4A005D57ED /* xApiIos */,
 				9122DBD62586BA4A005D57ED /* Products */,
@@ -127,7 +127,6 @@
 				9122DC2A258700DD005D57ED /* ObjectsView.swift */,
 				9122DC172586FB69005D57ED /* SendView.swift */,
 				9122DC142586F8A5005D57ED /* TopButtonsView.swift */,
-				9113BB8A258E54CA00BB1080 /* SecondaryView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -219,7 +218,6 @@
 			files = (
 				9122DC2E258701AA005D57ED /* MessagesView.swift in Sources */,
 				9122DC282586FFD4005D57ED /* FiltersView.swift in Sources */,
-				9113BB8B258E54CA00BB1080 /* SecondaryView.swift in Sources */,
 				9122DC152586F8A5005D57ED /* TopButtonsView.swift in Sources */,
 				9122DC352587B176005D57ED /* AppExtensions.swift in Sources */,
 				9122DBD92586BA4A005D57ED /* AppDelegate.swift in Sources */,
@@ -381,6 +379,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.9.2;
 				PRODUCT_BUNDLE_IDENTIFIER = net.k3tzr.xApiIos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -404,6 +403,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.9.2;
 				PRODUCT_BUNDLE_IDENTIFIER = net.k3tzr.xApiIos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

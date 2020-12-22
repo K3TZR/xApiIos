@@ -29,8 +29,6 @@ extension DefaultsKeys {
     var clientId                : DefaultsKey<String>          { .init("clientId", defaultValue: "") }
     var defaultConnection       : DefaultsKey<String>          { .init("defaultConnection", defaultValue: "") }
     var defaultGuiConnection    : DefaultsKey<String>          { .init("defaultGuiConnection", defaultValue: "") }
-    var fontSizeMax             : DefaultsKey<Int>             { .init("fontSizeMax", defaultValue: 20) }
-    var fontSizeMin             : DefaultsKey<Int>             { .init("fontSizeMin", defaultValue: 8) }
     var fontSize                : DefaultsKey<Int>             { .init("fontSize", defaultValue: 12) }
     var messagesFilterText      : DefaultsKey<String>          { .init("messagesFilterText", defaultValue: "") }
     var messagesFilterBy        : DefaultsKey<String>          { .init("messagesFilterBy", defaultValue: "none") }

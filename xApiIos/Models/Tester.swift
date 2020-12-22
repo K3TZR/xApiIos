@@ -56,7 +56,7 @@ final class Tester :  ObservableObject,  ApiDelegate, RadioManagerDelegate, Logg
     // MARK: - Static properties
     
     public static let kDomainName = "net.k3tzr"
-    public static let kAppName = "TestIos"
+    public static let kAppName = "xApiIos"
     
     // ----------------------------------------------------------------------------
     // MARK: - Published properties
@@ -74,8 +74,6 @@ final class Tester :  ObservableObject,  ApiDelegate, RadioManagerDelegate, Logg
     @Published var enablePinging        = false   { didSet {Defaults.enablePinging = enablePinging} }
     @Published var enableSmartLink      = false   { didSet {Defaults.enableSmartLink = enableSmartLink} }
     @Published var fontSize             = 12      { didSet {Defaults.fontSize = fontSize} }
-    @Published var fontSizeMax          = 12      { didSet {Defaults.fontSizeMax = fontSizeMax} }
-    @Published var fontSizeMin          = 12      { didSet {Defaults.fontSizeMin = fontSizeMin} }
     @Published var showReplies          = false   { didSet {Defaults.showReplies = showReplies} }
     @Published var showPings            = false   { didSet {Defaults.showPings = showPings} }
     @Published var showTimestamps       = false   { didSet {Defaults.showTimestamps = showTimestamps} }
@@ -97,19 +95,7 @@ final class Tester :  ObservableObject,  ApiDelegate, RadioManagerDelegate, Logg
     @Published var cmdToSend            = ""
     @Published var isConnected          = false
     @Published var showLogWindow        = false   { didSet {Defaults.showLogWindow = showLogWindow} }
-    
-    // ----------------------------------------------------------------------------
-    // MARK: - Internal properties
-    
-//    var defaultConnection : String {
-//        get { return Defaults.defaultConnection }
-//        set { Defaults.defaultConnection = newValue }
-//    }
-//    var defaultGuiConnection : String {
-//        get { return Defaults.defaultGuiConnection }
-//        set { Defaults.defaultGuiConnection = newValue }
-//    }
-    
+        
     // ----------------------------------------------------------------------------
     // MARK: - Private properties
     
@@ -135,14 +121,9 @@ final class Tester :  ObservableObject,  ApiDelegate, RadioManagerDelegate, Logg
         get { return _objectQ.sync { _objects } }
         set { _objectQ.sync(flags: .barrier) { _objects = newValue } } }
     
-//    private var replyHandlers: [SequenceNumber: ReplyTuple] {
-//        get { return _objectQ.sync { _replyHandlers } }
-//        set { _objectQ.sync(flags: .barrier) { _replyHandlers = newValue } } }
-    
     // Backing store, do not use
     private var _messages       = [Message]()
     private var _objects        = [Object]()
-//    private var _replyHandlers  = [SequenceNumber: ReplyTuple]()
     
     // ----------------------------------------------------------------------------
     // MARK: - Initialization
@@ -160,8 +141,6 @@ final class Tester :  ObservableObject,  ApiDelegate, RadioManagerDelegate, Logg
         enablePinging           = Defaults.enablePinging
         enableSmartLink         = Defaults.enableSmartLink
         fontSize                = Defaults.fontSize
-        fontSizeMax             = Defaults.fontSizeMax
-        fontSizeMin             = Defaults.fontSizeMin
         showReplies             = Defaults.showReplies
         showPings               = Defaults.showPings
         showTimestamps          = Defaults.showTimestamps
@@ -239,22 +218,26 @@ final class Tester :  ObservableObject,  ApiDelegate, RadioManagerDelegate, Logg
         if clearOnSend { DispatchQueue.main.async { self.cmdToSend = "" }}
     }
     
-//    /// Adjust the font size larger or smaller (within limits)
-//    ///
-//    /// - Parameter larger:           larger?
-//    ///
-//    func fontSize(larger: Bool) {
-//        // incr / decr the size
-//        var newSize =  Defaults.fontSize + (larger ? +1 : -1)
-//        // subject to limits
-//        if larger {
-//            if newSize > Defaults.fontMaxSize { newSize = Defaults.fontMaxSize }
-//        } else {
-//            if newSize < Defaults.fontMinSize { newSize = Defaults.fontMinSize }
-//        }
-//        fontSize = newSize
-//    }
+    func smartLinkLogInOut() {
+        if smartLinkIsLoggedIn {
+            radioManager.smartLinkLogout()
+        } else {
+            radioManager.smartLinkLogin()
+        }
+    }
     
+    func smartLinkTest() {
+        radioManager.smartLinkTest()
+    }
+    
+    func chooseDefault() {
+        radioManager.chooseDefault()
+    }
+    
+    func showPicker() {
+        radioManager.showPicker()
+    }
+
     // ----------------------------------------------------------------------------
     // MARK: -  Private methods (common to Messages and Objects)
     
@@ -616,12 +599,12 @@ final class Tester :  ObservableObject,  ApiDelegate, RadioManagerDelegate, Logg
         // switch on the first character
         switch text[text.startIndex] {
         
-        case "C":   populateMessages(text)       // Commands
-        case "H":   populateMessages(text)       // Handle type
-        case "M":   populateMessages(text)       // Message Type
-        case "R":   parseReplyMessage(suffix) // Reply Type
-        case "S":   populateMessages(text)       // Status type
-        case "V":   populateMessages(text)       // Version Type
+        case "C":   populateMessages(text)      // Commands
+        case "H":   populateMessages(text)      // Handle type
+        case "M":   populateMessages(text)      // Message Type
+        case "R":   parseReplyMessage(suffix)   // Reply Type
+        case "S":   populateMessages(text)      // Status type
+        case "V":   populateMessages(text)      // Version Type
         default:    populateMessages("ERROR: Unknown Message, \(text[text.startIndex] as! CVarArg)") // Unknown Type
         }
         refreshObjects()

@@ -18,6 +18,7 @@ struct ContentView: View {
                 Spacer()
                 LoggerView()
             }
+            .padding()
         } else {
             VStack(alignment: .leading) {
                 TopButtonsView()
@@ -26,8 +27,10 @@ struct ContentView: View {
                 ObjectsView(objects: tester.filteredObjects, fontSize: tester.fontSize)
                 MessagesView(messages: tester.filteredMessages, showTimestamps: tester.showTimestamps, fontSize: tester.fontSize)
                 BottomButtonsView()
-                StubView(radioManager: tester.radioManager)
+                
+                StubView(radioManager: tester.radioManager) // required to show Auth0 Login
             }
+            .padding()
         }
     }
 }
@@ -35,7 +38,7 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-            .previewLayout(.fixed(width: 2360 / 2.0, height: 1640 / 2.0))
             .environmentObject(Tester())
+            .previewLayout(.fixed(width: 2160 / 2.0, height: 1620 / 2.0))
     }
 }

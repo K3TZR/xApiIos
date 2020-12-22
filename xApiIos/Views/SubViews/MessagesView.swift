@@ -26,9 +26,10 @@ struct MessagesView: View {
         
         let base = text.dropFirst(9)
         if base.prefix(1) == "C" { color = Color(.systemGreen) }
-        if base.prefix(1) == "R" { color = Color(.systemRed) }
+        if base.prefix(1) == "R" && base.contains("|0|") { color = Color(.systemGray) }
+        if base.prefix(1) == "R" && !base.contains("|0|") { color = Color(.systemRed) }
         if base.prefix(2) == "S0" { color = Color(.systemOrange) }
-        
+                
         return color
     }
     
@@ -47,9 +48,9 @@ struct MessagesView: View {
                 }.onChange(of: messages.count, perform: { value in
                     scrollView.scrollTo(messages.count, anchor: .center)
                 })
+                Divider().frame(height: 2).background(Color(.opaqueSeparator))
             }
         }
-        Divider().frame(height: 2).background(Color(.opaqueSeparator))
     }
 }
 

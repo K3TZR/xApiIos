@@ -25,8 +25,8 @@ struct ObjectsView: View {
                     }
                 }
             }
+            Divider().frame(height: 6).background(Color(.opaqueSeparator))
         }
-        Divider().frame(height: 6).background(Color(.opaqueSeparator))
     }
 }
 

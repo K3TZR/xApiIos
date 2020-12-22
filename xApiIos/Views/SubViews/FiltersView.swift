@@ -15,12 +15,11 @@ struct FiltersView: View {
             Divider().frame(height: 2).background(Color(.opaqueSeparator))
             HStack {
                 FilterView(filterType: .objects)
-                Spacer()
+//                Spacer()
                 FilterView(filterType: .messages)
             }
-            .padding(.horizontal, 40)
+            Divider().frame(height: 2).background(Color(.opaqueSeparator))
         }
-        Divider().frame(height: 2).background(Color(.opaqueSeparator))
     }
 }
 
