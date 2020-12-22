@@ -48,7 +48,6 @@
 		9122DC2D258701AA005D57ED /* MessagesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MessagesView.swift; path = SubViews/MessagesView.swift; sourceTree = "<group>"; };
 		9122DC3025870293005D57ED /* BottomButtonsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BottomButtonsView.swift; path = SubViews/BottomButtonsView.swift; sourceTree = "<group>"; };
 		9122DC342587B176005D57ED /* AppExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppExtensions.swift; sourceTree = "<group>"; };
-		91CCF42925902D4C0063757A /* xClientIos */ = {isa = PBXFileReference; lastKnownFileType = folder; name = xClientIos; path = ../xClientIos; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,7 +74,6 @@
 		9122DBCC2586BA4A005D57ED = {
 			isa = PBXGroup;
 			children = (
-				91CCF42925902D4C0063757A /* xClientIos */,
 				9113BB9E258FADDE00BB1080 /* README.md */,
 				9122DBD72586BA4A005D57ED /* xApiIos */,
 				9122DBD62586BA4A005D57ED /* Products */,
@@ -440,7 +438,7 @@
 			repositoryURL = "https://github.com/K3TZR/xClientIos.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.9.3;
+				minimumVersion = 0.9.4;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
