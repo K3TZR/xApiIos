@@ -11,7 +11,7 @@
 * iOS 14 and higher
 
 ##### Builds
-Compiled [RELEASE builds](https://github.com/K3TZR/xApiIos/releases)  will be created at relatively stable points, please use them.  If you require a DEBUG build you will have to build from sources. 
+Since this is an iOS / iPad app, no builds are included in releases. Until it is on the App Store (some day) you will only be able to run it in Xcode on a simulator or an attached device.
 
 ##### Comments / Questions
 Please send any bugs / comments / questions to support@k3tzr.net
@@ -21,10 +21,6 @@ Please send any bugs / comments / questions to support@k3tzr.net
 
 [xClientIos](https://github.com/K3TZR/xClientIos.git)
 
-[SwiftyUserDefaults](https://github.com/sunshinejr/SwiftyUserDefaults.git)
-
-[XCGLogger](https://github.com/DaveWoodCom/XCGLogger.git)
-
 ##### Other software
 [![xSDR6000](https://img.shields.io/badge/K3TZR-xSDR6000-informational)]( https://github.com/K3TZR/xSDR6000) A SmartSDR-like client for the Mac.   
 [![DL3LSM](https://img.shields.io/badge/DL3LSM-xDAX,_xCAT,_xKey-informational)](https://dl3lsm.blogspot.com) Mac versions of DAX and/or CAT and a Remote CW Keyer.  
@@ -33,7 +29,6 @@ Please send any bugs / comments / questions to support@k3tzr.net
 ---
 ##### 0.9.2 Release Notes
 * corrections throughout
-
 
 ##### 0.9.1 Release Notes
 * added README.md
