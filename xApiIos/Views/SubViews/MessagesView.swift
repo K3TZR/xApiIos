@@ -1,6 +1,6 @@
 //
 //  MessagesView.swift
-//  xApiMac
+//  xApiIos
 //
 //  Created by Douglas Adams on 7/28/20.
 //  Copyright © 2020 Douglas Adams. All rights reserved.
@@ -35,22 +35,21 @@ struct MessagesView: View {
     
     var body: some View {
         
-        VStack {
-            ScrollViewReader { scrollView in
-                ScrollView {
+        ScrollViewReader { scrollView in
+            ScrollView([.horizontal, .vertical], showsIndicators: true) {
+                VStack (alignment: .leading) {
                     ForEach(messages) { message in
                         Text(showTimestamps(text: message.text))
                             .padding(.leading, 5)
-                            .font(.system(size: CGFloat(fontSize), weight: .regular, design: .monospaced))
                             .frame(minWidth: 400, maxWidth: .infinity, maxHeight: 18, alignment: .leading)
                             .foregroundColor( lineColor(message.text) )
                     }
-                }.onChange(of: messages.count, perform: { value in
-                    scrollView.scrollTo(messages.count, anchor: .center)
-                })
-                Divider().frame(height: 2).background(Color(.opaqueSeparator))
+                }
             }
-        }
+            .onChange(of: messages.count, perform: { _ in
+                scrollView.scrollTo(messages.count+1, anchor: .bottomLeading)
+            })
+        }.font(.system(size: CGFloat(fontSize), weight: .regular, design: .monospaced))
     }
 }
 
@@ -63,8 +62,7 @@ struct MessagesView_Previews: PreviewProvider {
             Message(id: 2, text: "11:40:06 S0 The third message"),
             Message(id: 3, text: "11:40:07    The fourth message")
         ]
-        let mockFontSize = 20
-        MessagesView(messages: mockMessages, showTimestamps: true, fontSize: mockFontSize)
-        //      .environmentObject(Tester())
+        MessagesView(messages: mockMessages, showTimestamps: true, fontSize: 20)
+            .previewLayout(.fixed(width: 2160 / 2.0, height: 1620 / 2.0))
     }
 }

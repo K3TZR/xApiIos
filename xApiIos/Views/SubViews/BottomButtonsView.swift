@@ -1,6 +1,6 @@
 //
 //  BottomButtonsView.swift
-//  xApiMac
+//  xApiIos
 //
 //  Created by Douglas Adams on 7/28/20.
 //  Copyright © 2020 Douglas Adams. All rights reserved.
@@ -11,42 +11,32 @@ import SwiftUI
 struct BottomButtonsView: View {
     @EnvironmentObject var tester : Tester
     
-    let buttonWidth : CGFloat = 70
-    let toggleWidth : CGFloat = 215
-    
     var body: some View {
         
         VStack(alignment: .leading) {
-            HStack  {
+            HStack {
                 Stepper("Font Size", value: $tester.fontSize, in: 8...24).frame(width: 175)
                 
                 Spacer()
-                
-                Toggle(isOn: $tester.clearAtConnect) {
-                    Text("Clear on Connect").frame(maxWidth: .infinity, alignment: .trailing)
-                }.frame(maxWidth: 150, alignment: .trailing)
-                
-                Spacer()
-                
-                Toggle(isOn: $tester.clearAtDisconnect) {
-                    Text("Clear on Disconnect").frame(maxWidth: .infinity, alignment: .trailing)
-                }.frame(maxWidth: 150, alignment: .trailing)
-                
-                Spacer()
-                
-                Button(action: {tester.clearObjectsAndMessages()}) {Text("Clear Now")}
-                
-                Spacer()
-                
-                Button(action: {tester.showLogWindow.toggle()}) {
-                    Text("Log View").frame(width: buttonWidth)
+
+                HStack (spacing: 30) {
+                    Toggle("Clear on Connect", isOn: $tester.clearAtConnect).frame(width: 190)
+                    Toggle("Clear on Disconnect", isOn: $tester.clearAtDisconnect).frame(width: 215)
                 }
+                Spacer()
+                
+                Button(action: {self.tester.clearObjectsAndMessages()}) {Text("Clear Now")}
+
+                Spacer()
+                
+                Button( action: {tester.showLogWindow.toggle()}) {Text("Log Window")}
             }
         }
     }
 }
 
 struct BottomButtonsView_Previews: PreviewProvider {
+
     static var previews: some View {
         BottomButtonsView()
             .environmentObject(Tester())

@@ -11,86 +11,68 @@ import xClientIos
 
 struct TopButtonsView: View {
     @EnvironmentObject var tester : Tester
+    @EnvironmentObject var radioManager : RadioManager
+    
+    @State var showDefaultsAlert = false
 
     var body: some View {
         
-        let stackWidth  : CGFloat = 200
-        let buttonWidth : CGFloat = 80
-        
         VStack(alignment: .leading) {
-            HStack {
+            HStack (spacing: 20){
                 // Top row
                 Button(action: {tester.startStop()} ) {
-                    Text(tester.isConnected ? "Stop" : "Start" ).frame(maxWidth: buttonWidth, alignment: .leading) }
+                    Text(tester.isConnected ? "Stop" : "Start" ).frame(width: 50, alignment: .leading)
+                }                
+                .help("Using the Default connection type")
+                .padding(.bottom, 50)
+
+                Spacer()
+                
+                VStack (alignment: .leading) {
+                    Toggle(isOn: $tester.enableGui) {
+                        Text("As Gui") }
+                    Toggle(isOn: $tester.showTimestamps) {
+                        Text("Show Times") }.padding(.bottom, 10)
+                }.frame(width: 150)
+                
+                VStack (alignment: .leading) {
+                    Toggle(isOn: $tester.connectToFirstRadio) {
+                        Text("Default to 1st")}
+                    Toggle(isOn: $tester.showPings) {
+                        Text("Show Pings")}.padding(.bottom, 10)
+                }.frame(width: 160)
+                
+                VStack (alignment: .leading) {
+                    Toggle(isOn: $tester.enablePinging) {
+                        Text("Enable Ping")}
+                    Toggle(isOn: $tester.showReplies) {
+                        Text("Show Replies")}.padding(.bottom, 10)
+                }.frame(width: 160)
+                
+                Toggle(isOn: $tester.enableSmartLink) {
+                    Text("Enable SmartLink")
+                    
+                }.padding(.bottom, 50).frame(width: 200)
                 
                 Spacer()
                 
-                HStack(alignment: .center) {
-                    VStack (alignment: .leading)
-                    {
-                        Toggle(isOn: $tester.enableGui) {
-                            Text("Connect as Gui").frame(maxWidth: .infinity, alignment: .trailing)
-                        }
-                        Toggle(isOn: $tester.showTimestamps) {
-                            Text("Show Times").frame(maxWidth: .infinity, alignment: .trailing)
-                        }
-                                               
-                    }.frame(maxWidth: stackWidth, alignment: .trailing)
-
-
-                    VStack (alignment: .leading) {
-                        Toggle(isOn: $tester.enablePinging) {
-                            Text("Enable Pinging").frame(maxWidth: .infinity, alignment: .trailing)
-                        }
-                        Toggle(isOn: $tester.showPings) {
-                            Text("Show Pings").frame(maxWidth: .infinity, alignment: .trailing)
-                        }
-                    }.frame(maxWidth: stackWidth, alignment: .trailing)
-
-                    
-                    VStack (alignment: .leading) {
-                        Toggle(isOn: $tester.enableSmartLink) {
-                            Text("Enable SmartLink").frame(maxWidth: .infinity, alignment: .trailing)
-                        }
-                        Toggle(isOn: $tester.showReplies) {
-                            Text("Show Replies").frame(maxWidth: .infinity, alignment: .trailing)
-                        }
-                    }
-                    .frame(maxWidth: stackWidth, alignment: .trailing)
-
-                    Spacer()
-                    
-                    Button(action: {tester.smartLinkLogInOut()} ) {
-                        Text(tester.smartLinkIsLoggedIn ? "SmartLink Logout" : "SmartLink Login").frame(maxWidth: buttonWidth, alignment: .center)
-                    }.multilineTextAlignment(.center)
-                    .disabled(!tester.enableSmartLink)
-                    
-                    VStack (alignment: .center) {
-                        Button(action: {tester.smartLinkTest()} ) {
-                            Text("Test").frame(maxWidth: buttonWidth, alignment: .center)
-                            
-                        }.disabled(!tester.enableSmartLink)
-                        Circle()
-                            .fill(tester.smartLinkTestStatus ? Color.green : Color.red)
-                            .frame(width: 20, height: 20)
-                    }.frame(maxWidth: buttonWidth, alignment: .center)
+                Button(action: {tester.clearDefaults() ; showDefaultsAlert = true}) {
+                    Text("Clear Defaults")
                 }
-                Spacer()
+                .alert(isPresented: $showDefaultsAlert) {
+                    Alert(title: Text("Defaults were cleared"), message: Text(""), dismissButton: .default(Text("Ok")))
+                }
                 
-                VStack (spacing: 20) {
-                    Button(action: {tester.chooseDefault()}) {
-                        Text("Defaults").frame(maxWidth: buttonWidth, alignment: .center) }
-                    Button(action: {tester.showPicker()}) {
-                        Text("Picker")
-                    }.frame(maxWidth: buttonWidth, alignment: .center)
-                    .disabled(tester.isConnected)
-                }
+                
+                
+                .padding(.bottom, 50)
             }
         }
     }
 }
 
 struct TopButtonsView_Previews: PreviewProvider {
+
     static var previews: some View {
         TopButtonsView()
             .environmentObject(Tester())

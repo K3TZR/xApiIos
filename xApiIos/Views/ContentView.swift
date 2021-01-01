@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  xApiMac
+//  xApiIos
 //
 //  Created by Douglas Adams on 8/9/20.
 //
@@ -10,7 +10,8 @@ import xClientIos
 
 struct ContentView: View {
     @EnvironmentObject var tester: Tester
-    
+    @EnvironmentObject var radioManager : RadioManager
+
     var body: some View {
         
         if tester.showLogWindow {
@@ -18,19 +19,36 @@ struct ContentView: View {
                 Spacer()
                 LoggerView()
             }
-            .padding()
+            .padding(.horizontal)
+            .padding(.bottom, 10)
+
         } else {
             VStack(alignment: .leading) {
                 TopButtonsView()
+                    .sheet(isPresented: $radioManager.showPickerView) {
+                        PickerView().environmentObject(radioManager)
+                    }
+
                 SendView()
                 FiltersView()
+
+                Divider().frame(height: 2).background(Color(.opaqueSeparator))
+
                 ObjectsView(objects: tester.filteredObjects, fontSize: tester.fontSize)
-                MessagesView(messages: tester.filteredMessages, showTimestamps: tester.showTimestamps, fontSize: tester.fontSize)
-                BottomButtonsView()
                 
-                StubView(radioManager: tester.radioManager) // required to show Auth0 Login
+                Divider().frame(height: 4).background(Color(.systemBlue))
+
+                MessagesView(messages: tester.filteredMessages, showTimestamps: tester.showTimestamps, fontSize: tester.fontSize)
+                
+                Divider().frame(height: 2).background(Color(.opaqueSeparator))
+
+                BottomButtonsView()
+                    .multiAlert(isPresented: $radioManager.showMultiAlert, radioManager.currentMultiAlert)
+
+//                StubView(radioManager: tester.radioManager)
             }
-            .padding()
+            .padding(.horizontal)
+//            .padding(.bottom, 10)
         }
     }
 }
