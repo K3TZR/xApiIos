@@ -27,7 +27,10 @@ Please send any bugs / comments / questions to support@k3tzr.net
 [![W6OP](https://img.shields.io/badge/W6OP-xVoiceKeyer,_xCW-informational)](https://w6op.com) A Mac-based Voice Keyer and a CW Keyer.  
 
 ---
-##### 0.9.3 Release Notes (**** NOT PUSHED OR COMMITTED ****)
+##### 0.9.4 Release Notes
+* continuing development
+
+##### 0.9.3 Release Notes
 * eliminated "Tester" used as appName
 * added SubViews folder and moved items to it
 

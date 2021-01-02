@@ -385,7 +385,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.9.3;
+				MARKETING_VERSION = 0.9.4;
 				PRODUCT_BUNDLE_IDENTIFIER = net.k3tzr.xApiIos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -409,7 +409,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.9.3;
+				MARKETING_VERSION = 0.9.4;
 				PRODUCT_BUNDLE_IDENTIFIER = net.k3tzr.xApiIos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -446,7 +446,7 @@
 			repositoryURL = "https://github.com/K3TZR/xClientIos.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.9.5;
+				minimumVersion = 0.9.6;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

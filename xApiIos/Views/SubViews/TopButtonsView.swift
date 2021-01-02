@@ -12,7 +12,7 @@ import xClientIos
 struct TopButtonsView: View {
     @EnvironmentObject var tester : Tester
     @EnvironmentObject var radioManager : RadioManager
-    
+
     @State var showDefaultsAlert = false
 
     var body: some View {
@@ -56,16 +56,17 @@ struct TopButtonsView: View {
                 
                 Spacer()
                 
-                Button(action: {tester.clearDefaults() ; showDefaultsAlert = true}) {
+                Button(action: {tester.clearDefaults() }) {
                     Text("Clear Defaults")
                 }
-                .alert(isPresented: $showDefaultsAlert) {
-                    Alert(title: Text("Defaults were cleared"), message: Text(""), dismissButton: .default(Text("Ok")))
-                }
-                
-                
-                
                 .padding(.bottom, 50)
+
+                .alert(isPresented: $tester.showCurrentAlert) {
+                    tester.currentAlert
+                }
+                .sheet(isPresented: $tester.showPickerView, onDismiss: { tester.radioManager.connect(to: tester.radioManager.pickerSelection) }) {
+                    PickerView().environmentObject(radioManager)
+                }
             }
         }
     }

@@ -51,7 +51,7 @@ enum FilterMessages : String, CaseIterable {
 
 //final class Tester : ApiDelegate, ObservableObject, RadioManagerDelegate {
 final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, LoggerDelegate {
-    
+
     // ----------------------------------------------------------------------------
     // MARK: - Static properties
     
@@ -62,6 +62,9 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
     // MARK: - Published properties
     
     @Published var radioManager         : RadioManager!
+    
+    public var currentAlert             = Alert(title: Text("Alert"))
+    @Published public var showCurrentAlert = false
     
     @Published var clearAtConnect       = false   { didSet {Defaults.clearAtConnect = clearAtConnect} }
     @Published var clearAtDisconnect    = false   { didSet {Defaults.clearAtDisconnect = clearAtDisconnect} }
@@ -90,6 +93,12 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
     @Published var filteredObjects      = [Object]()
     @Published var objectsFilterBy      : FilterObjects   = .none { didSet {filterCollection(of: .objects) ; Defaults.objectsFilterBy = objectsFilterBy.rawValue }}
     @Published var objectsFilterText    = ""                      { didSet {filterCollection(of: .objects) ; Defaults.objectsFilterText = objectsFilterText}}
+    
+    
+    
+    @Published public var showPickerView        = false
+
+    
     
     // ----------------------------------------------------------------------------
     // MARK: - Internal properties
@@ -136,6 +145,7 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
     // MARK: - Initialization
     
     init() {
+        
         // restore Defaults
         clearAtConnect      = Defaults.clearAtConnect
         clearAtDisconnect   = Defaults.clearAtDisconnect

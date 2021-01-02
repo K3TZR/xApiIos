@@ -12,8 +12,8 @@ import xClientIos
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?               // the app's contentView window
-    var tester: Tester?                 // this app
-    var radioManager: RadioManager?     // xCLientIos RadioManager
+    var tester: Tester!                 // this app
+    var radioManager: RadioManager?     // xClientIos RadioManager
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -25,13 +25,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         //instantiate RadioManager with the app as its delegate
         radioManager = RadioManager(delegate: tester!)
         // give the app a reference to RadioManager
-        tester?.radioManager = radioManager
+        tester!.radioManager = radioManager
 
         // Create the SwiftUI view that provides the window contents.
         let contentView = ContentView()
-            .environmentObject(tester!)
-            .environmentObject(Logger.sharedInstance)
+            .environmentObject(tester)
             .environmentObject(radioManager!)
+//            .environmentObject(Logger.sharedInstance)
 
 
         // Use a UIHostingController as window root view controller.
@@ -41,8 +41,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             self.window = window
             window.makeKeyAndVisible()
         }
-        
-//        NotificationCenter.default.addObserver(self, selector: #selector(self.showAlert), name: Notification.Name("showAlert"), object: nil)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -72,26 +70,5 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
-    
-//    @objc private func showAlert(notification: NSNotification){
-//        let params = notification.object as! AlertParams
-//        let alert =  UIAlertController(title: params.title, message: params.message, preferredStyle: .alert)
-//        var action = UIAlertAction()
-//        params.buttons.forEach({
-//            action = UIAlertAction(title: $0.text, style: $0.text == "Cancel" ? .cancel : .default, handler: $0.action)
-//            if $0.text == "Cancel" {action.setValue(UIColor.systemGray, forKey: "titleTextColor")}
-//            alert.addAction(action)
-//        })
-//
-//        var parentController = UIApplication.shared rootViewController
-//        while (parentController?.presentedViewController != nil &&
-//            parentController != parentController!.presentedViewController) {
-//                parentController = parentController!.presentedViewController
-//        }
-//        parentController?.present(alertController, animated:true, completion:nil)
-//        DispatchQueue.main.async {
-//            self.window?.rootViewController?.present(alert, animated: true, completion: nil)
-//        }
-//    }
 }
 

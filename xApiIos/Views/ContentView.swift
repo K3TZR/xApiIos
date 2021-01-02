@@ -25,9 +25,6 @@ struct ContentView: View {
         } else {
             VStack(alignment: .leading) {
                 TopButtonsView()
-                    .sheet(isPresented: $radioManager.showPickerView) {
-                        PickerView().environmentObject(radioManager)
-                    }
 
                 SendView()
                 FiltersView()
@@ -43,12 +40,10 @@ struct ContentView: View {
                 Divider().frame(height: 2).background(Color(.opaqueSeparator))
 
                 BottomButtonsView()
-                    .multiAlert(isPresented: $radioManager.showMultiAlert, radioManager.currentMultiAlert)
 
-//                StubView(radioManager: tester.radioManager)
+//                StubView()
             }
             .padding(.horizontal)
-//            .padding(.bottom, 10)
         }
     }
 }
@@ -57,6 +52,7 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
             .environmentObject(Tester())
+            .environmentObject(RadioManager(delegate: Tester()))
             .previewLayout(.fixed(width: 2160 / 2.0, height: 1620 / 2.0))
     }
 }
