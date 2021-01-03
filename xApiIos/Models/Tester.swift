@@ -9,6 +9,7 @@ import xLib6000
 import SwiftyUserDefaults
 import SwiftUI
 import xClientIos
+import Foundation
 
 typealias ObjectTuple = (color: UIColor, text: String)
 
@@ -49,8 +50,7 @@ enum FilterMessages : String, CaseIterable {
 // MARK: - Class definition
 // ----------------------------------------------------------------------------
 
-//final class Tester : ApiDelegate, ObservableObject, RadioManagerDelegate {
-final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, LoggerDelegate {
+final class Tester :  ObservableObject, ApiDelegate, LoggerDelegate {    
 
     // ----------------------------------------------------------------------------
     // MARK: - Static properties
@@ -61,11 +61,6 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
     // ----------------------------------------------------------------------------
     // MARK: - Published properties
     
-    @Published var radioManager         : RadioManager!
-    
-    public var currentAlert             = Alert(title: Text("Alert"))
-    @Published public var showCurrentAlert = false
-    
     @Published var clearAtConnect       = false   { didSet {Defaults.clearAtConnect = clearAtConnect} }
     @Published var clearAtDisconnect    = false   { didSet {Defaults.clearAtDisconnect = clearAtDisconnect} }
     @Published var clearOnSend          = false   { didSet {Defaults.clearOnSend = clearOnSend} }
@@ -73,7 +68,6 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
     @Published var cmdToSend            = ""
     @Published var connectToFirstRadio  = false   { didSet {Defaults.connectToFirstRadio = connectToFirstRadio} }
     @Published var enableGui            = false   { didSet {Defaults.enableGui = enableGui} }
-    @Published var enablePinging        = false   { didSet {Defaults.enablePinging = enablePinging} }
     @Published var enableSmartLink      = false   { didSet {Defaults.enableSmartLink = enableSmartLink} }
     @Published var fontSize             = 12      { didSet {Defaults.fontSize = fontSize} }
     @Published var isConnected          = false
@@ -82,8 +76,6 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
     @Published var showReplies          = false   { didSet {Defaults.showReplies = showReplies} }
     @Published var showTimestamps       = false   { didSet {Defaults.showTimestamps = showTimestamps} }
     @Published var smartLinkAuth0Email  = ""      { didSet {Defaults.smartLinkAuth0Email = smartLinkAuth0Email} }
-    @Published var smartLinkIsLoggedIn  = false
-    @Published var smartLinkTestStatus  = false
     @Published var stationName          = Tester.kAppName
 
     @Published var filteredMessages     = [Message]()
@@ -96,7 +88,6 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
     
     
     
-    @Published public var showPickerView        = false
 
     
     
@@ -104,14 +95,14 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
     // MARK: - Internal properties
     
     var defaultConnection : String {
-        get { return Defaults.defaultConnection }
+        get { Defaults.defaultConnection }
         set { Defaults.defaultConnection = newValue }
     }
     var defaultGuiConnection : String {
-        get { return Defaults.defaultGuiConnection }
+        get { Defaults.defaultGuiConnection }
         set { Defaults.defaultGuiConnection = newValue }
     }
-
+    
     // ----------------------------------------------------------------------------
     // MARK: - Private properties
     
@@ -151,9 +142,7 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
         clearAtDisconnect   = Defaults.clearAtDisconnect
         clearOnSend         = Defaults.clearOnSend
         clientId            = Defaults.clientId
-        connectToFirstRadio = Defaults.connectToFirstRadio
         enableGui           = Defaults.enableGui
-        enablePinging       = Defaults.enablePinging
         enableSmartLink     = Defaults.enableSmartLink
         fontSize            = Defaults.fontSize
         showLogWindow       = Defaults.showLogWindow
@@ -171,37 +160,19 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
         _log = Logger.sharedInstance.logMessage
         LogProxy.sharedInstance.delegate = Logger.sharedInstance
         
-        // is there a saved Client ID?
-        if clientId == "" {
-            // NO, assign one
-            clientId = UUID().uuidString
-            Defaults.clientId = clientId
-            _log("\(Tester.kAppName): ClientId created - \(clientId)", .debug,  #function, #file, #line)
-        }
         // setup defaults for each connection type
         defaultConnection       = Defaults.defaultConnection
         defaultGuiConnection    = Defaults.defaultGuiConnection
 
         // support use of "Back to Main" button on LoggerView
-        NotificationCenter.default.addObserver(self, selector: #selector(self.showMainView), name: Notification.Name("showMainView"), object: nil)
-
+        addNotifications()
+        
         // receive delegate actions from the Api
         _api.testerDelegate = self
     }
 
     // ----------------------------------------------------------------------------
     // MARK: -  Internal methods (Tester related)
-    
-    /// Start / Stop the Tester
-    ///
-    func startStop() {
-        if isConnected == false {
-            start()
-        } else {
-            stop()
-            _startTimestamp = nil
-        }
-    }
     
     /// Clear the object and messages areas
     ///
@@ -217,13 +188,10 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
         }
     }
     
-    /// Send a command to the Radio
+    /// A command  was sent to the Radio
     ///
-    func send(command: String) {
+    func sent(command: String) {
         guard command != "" else { return }
-        
-        // send the command to the Radio via TCP
-        let _ = _api.radio!.sendCommand( command )
         
         if command != _previousCommand { _commandHistory.append(command) }
         
@@ -233,75 +201,46 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
         // optionally clear the Command field
         if clearOnSend { DispatchQueue.main.async { self.cmdToSend = "" }}
     }
-    
-    func smartLinkLogInOut() {
-        if smartLinkIsLoggedIn {
-            radioManager.smartLinkLogout()
-        } else {
-            radioManager.smartLinkLogin()
-        }
-    }
-    
-    func smartLinkTest() {
-        radioManager.smartLinkTest()
-    }
-    
-    func clearDefaults() {
-        radioManager.clearDefaults()
 
+    // ----------------------------------------------------------------------------
+    // MARK: -  Notifications
+    
+    private func addNotifications() {
+        NotificationCenter.makeObserver(self, with: #selector(showMainView), of: ClientIosNotificationType.showMainView.rawValue)
+        NotificationCenter.makeObserver(self, with: #selector(defaultsWereChanged), of: ClientIosNotificationType.defaultsWereChanged.rawValue)
+        NotificationCenter.makeObserver(self, with: #selector(ClientIdWasAssigned), of: ClientIosNotificationType.ClientIdWasAssigned.rawValue)
+        NotificationCenter.makeObserver(self, with: #selector(smartLinkEmailUpdated), of: ClientIosNotificationType.smartLinkEmailUpdated.rawValue)
     }
     
-    func showPicker() {
-        radioManager.showPicker()
-    }
-
     @objc private func showMainView(notification: NSNotification){
         DispatchQueue.main.async { self.showLogWindow = false }
     }
 
+    @objc private func defaultsWereChanged(notification: NSNotification) {
+        if let tuple = notification.object as? DefaultsTuple {
+            defaultConnection = tuple.defaultConnection
+            defaultGuiConnection = tuple.defaultGuiConnection
+            connectToFirstRadio = tuple.connectToFirstRadio
+            _log("Defaults were changed: \(defaultConnection == "" ? "-- not set --" : defaultConnection ), \(defaultGuiConnection == "" ? "-- not set --" : defaultGuiConnection ), \(connectToFirstRadio)", .debug, #function, #file, #line)
+        }
+    }
+
+    @objc private func ClientIdWasAssigned(notification: NSNotification) {
+        if let id = notification.object as? String {
+            self.clientId = id
+            _log("Client Id was assigned: \(id)", .debug, #function, #file, #line)
+        }
+     }
+
+    @objc private func smartLinkEmailUpdated(notification: NSNotification) {
+        if let email = notification.object as? String {
+            self.smartLinkAuth0Email = email
+            _log("SmartLink email was updated: \(email)", .debug, #function, #file, #line)
+        }
+    }
 
     // ----------------------------------------------------------------------------
     // MARK: -  Private methods (common to Messages and Objects)
-    
-    /// Start the Tester
-    ///
-    private func start() {
-        // Start connection
-        //    Order of attempts:
-        //      1. default (if defaultConnection non-blank)
-        //      2. first radio found (if connectToFirstRadio true)
-        //      3. otherwise, show picker
-        //
-        //    It is the responsibility of the app to determine this logic
-        //
-        if clearAtConnect { clearObjectsAndMessages() }
-        
-        if connectToFirstRadio {
-            // connect to first
-            radioManager.connectToFirstFound()
-            
-        } else if enableGui && defaultGuiConnection != ""{
-            // Gui connect to default
-            radioManager.connect(to: defaultGuiConnection)
-            
-        } else if enableGui == false && defaultConnection != "" {
-            // Non-Gui connect to default
-            radioManager.connect(to: defaultConnection)
-            
-        } else {
-            // use the Picker
-            radioManager.showPicker()
-        }
-    }
-    
-    /// Stop the Tester
-    ///
-    private func stop() {
-        // Stop connection
-        DispatchQueue.main.async{ [self] in isConnected = false }
-        if clearAtDisconnect { clearObjectsAndMessages() }
-        radioManager.disconnect()
-    }
     
     /// Filter the message and object collections
     ///
@@ -406,21 +345,23 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
             self.objects.removeAll()
             var color = UIColor.systemGreen
             
+            // Show the connected Radio
             self.appendObject(color, "Radio (\(radio.packet.isWan ? "SmartLink" : "Local"))  name=\(radio.nickname)  model=\(radio.packet.model)  serial=\(radio.packet.serialNumber)  version=\(radio.packet.firmwareVersion)  ip=\(radio.packet.publicIp)" +
                                 "  atu=\(Api.sharedInstance.radio!.atuPresent ? "Yes" : "No")  gps=\(Api.sharedInstance.radio!.gpsPresent ? "Yes" : "No")" +
                                 "  scu's=\(Api.sharedInstance.radio!.numberOfScus)")
             
             self.appendObject(UIColor.systemBlue, "-------------------------------------------------------------------------------------------------------------------------------------------------------------------")
             
-            // what verion is the Radio?
+            // what version is the Radio?
             if radio.version.isNewApi {
                 
-                // newApi
-                for packet in _packets where packet == radioManager.activePacket {
+                // newApi, Show all GuiClients of this Radio
+                for packet in _packets {
                     for guiClient in packet.guiClients {
                         
                         activeHandle = guiClient.handle
                         
+                        // Uniquely color the one representing this app (purple vs red for others)
                         color = UIColor.systemRed
                         if enableGui == false && guiClient.clientId != nil && guiClient.clientId == radio.boundClientId { color = UIColor.systemPurple }
                         if enableGui == true  && guiClient.handle == _api.connectionHandle { color = UIColor.systemPurple }
@@ -563,35 +504,6 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
                 }
             }
         }
-    }
-    
-    // ----------------------------------------------------------------------------
-    // MARK: - RadioManagerDelegate
-    
-    /// Called asynchronously by RadioManager to indicate success / failure for a Radio connection attempt
-    /// - Parameters:
-    ///   - state:          true if connected
-    ///   - connection:     the connection string attempted
-    ///
-    func connectionState(_ state: Bool, _ connection: String, _ msg: String = "") {
-        // was the connection successful?
-        if state {
-            // YES
-            _log("Tester: Connection to \(connection) established", .debug,  #function, #file, #line)
-            
-        } else {
-            // NO
-            _log("Tester: Connection failed to \(connection), \(msg)", .debug,  #function, #file, #line)
-            radioManager.showPicker()
-        }
-        DispatchQueue.main.async { [self] in isConnected = state }
-    }
-    
-    /// Called by RadioManager when a disconnection occurs
-    /// - Parameter msg:      explanation
-    ///
-    func disconnectionState(_ text: String) {
-        DispatchQueue.main.async { self.isConnected = false }
     }
     
     // ----------------------------------------------------------------------------

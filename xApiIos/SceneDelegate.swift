@@ -22,15 +22,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // instantiate the app
         tester = Tester()
-        //instantiate RadioManager with the app as its delegate
-        radioManager = RadioManager(delegate: tester!)
+//        //instantiate RadioManager with the app as its delegate
+//        radioManager = RadioManager(delegate: tester!)
         // give the app a reference to RadioManager
-        tester!.radioManager = radioManager
+//        tester!.radioManager = radioManager
 
         // Create the SwiftUI view that provides the window contents.
         let contentView = ContentView()
             .environmentObject(tester)
-            .environmentObject(radioManager!)
+//            .environmentObject(radioManager!)
 //            .environmentObject(Logger.sharedInstance)
 
 

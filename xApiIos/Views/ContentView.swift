@@ -10,7 +10,7 @@ import xClientIos
 
 struct ContentView: View {
     @EnvironmentObject var tester: Tester
-    @EnvironmentObject var radioManager : RadioManager
+    @StateObject var radioManager = RadioManager()
 
     var body: some View {
         
@@ -24,9 +24,9 @@ struct ContentView: View {
 
         } else {
             VStack(alignment: .leading) {
-                TopButtonsView()
+                TopButtonsView(radioManager: radioManager)
 
-                SendView()
+                SendView(radioManager: radioManager)
                 FiltersView()
 
                 Divider().frame(height: 2).background(Color(.opaqueSeparator))
@@ -52,7 +52,7 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
             .environmentObject(Tester())
-            .environmentObject(RadioManager(delegate: Tester()))
+//            .environmentObject(RadioManager(delegate: Tester()))
             .previewLayout(.fixed(width: 2160 / 2.0, height: 1620 / 2.0))
     }
 }
