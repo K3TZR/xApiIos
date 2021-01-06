@@ -9,8 +9,10 @@ import SwiftUI
 import xClientIos
 
 struct ContentView: View {
-    @EnvironmentObject var tester: Tester
-    @StateObject var radioManager = RadioManager()
+//    @EnvironmentObject var tester: Tester
+    
+    @ObservedObject var tester: Tester
+    @ObservedObject var radioManager : RadioManager
 
     var body: some View {
         
@@ -24,10 +26,10 @@ struct ContentView: View {
 
         } else {
             VStack(alignment: .leading) {
-                TopButtonsView(radioManager: radioManager)
+                TopButtonsView(tester: tester, radioManager: radioManager)
 
-                SendView(radioManager: radioManager)
-                FiltersView()
+                SendView(tester: tester, radioManager: radioManager)
+                FiltersView(tester: tester)
 
                 Divider().frame(height: 2).background(Color(.opaqueSeparator))
 
@@ -39,20 +41,41 @@ struct ContentView: View {
                 
                 Divider().frame(height: 2).background(Color(.opaqueSeparator))
 
-                BottomButtonsView()
-
-//                StubView()
+                BottomButtonsView(tester: tester)
             }
             .padding(.horizontal)
+            
+            // Sheet presentation
+            .sheet(isPresented: $radioManager.showSheet, onDismiss: {
+                if radioManager.showPickerView {
+                    radioManager.connect(to: radioManager.pickerSelection)
+                } else {
+                    print("TODO: Dismiss Auth0View")
+                }
+           }) {
+                if radioManager.showPickerView {
+                    PickerView()
+                        .environmentObject(radioManager)
+                } else {
+                    Auth0View()
+                        .environmentObject(radioManager)
+                }
+            }
+
+//            .sheet(isPresented: $radioManager.showSheet, onDismiss: { print("Sheet was dismissed") ; radioManager.chooseDefaults() }) {
+//                PickerView()
+//                    .environmentObject(radioManager)
+//            }
+            
+            // MultiAlert presentation
+            .multiAlert(isPresented: $radioManager.showCurrentAlert, radioManager.currentAlert)
         }
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
-            .environmentObject(Tester())
-//            .environmentObject(RadioManager(delegate: Tester()))
+        ContentView(tester: Tester(), radioManager: RadioManager(delegate: Tester() as RadioManagerDelegate) )
             .previewLayout(.fixed(width: 2160 / 2.0, height: 1620 / 2.0))
     }
 }

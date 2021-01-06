@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct BottomButtonsView: View {
-    @EnvironmentObject var tester : Tester
+    @ObservedObject var tester : Tester
     
     var body: some View {
         
@@ -38,8 +38,7 @@ struct BottomButtonsView: View {
 struct BottomButtonsView_Previews: PreviewProvider {
 
     static var previews: some View {
-        BottomButtonsView()
-            .environmentObject(Tester())
+        BottomButtonsView(tester: Tester())
             .previewLayout(.fixed(width: 2160 / 2.0, height: 1620 / 2.0))
     }
 }

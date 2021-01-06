@@ -28,7 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		9113BB7D258AAC6B00BB1080 /* xApiIos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = xApiIos.entitlements; sourceTree = "<group>"; };
+		9113BAAF25A3F2A100A6EA3E /* xApiIos.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = xApiIos.entitlements; path = xApiIos/xApiIos.entitlements; sourceTree = "<group>"; };
 		9113BB80258AAC9200BB1080 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		9113BB9E258FADDE00BB1080 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		9122DBD52586BA4A005D57ED /* xApiIos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = xApiIos.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -74,6 +74,7 @@
 		9122DBCC2586BA4A005D57ED = {
 			isa = PBXGroup;
 			children = (
+				9113BAAF25A3F2A100A6EA3E /* xApiIos.entitlements */,
 				9113BB9E258FADDE00BB1080 /* README.md */,
 				9122DBD72586BA4A005D57ED /* xApiIos */,
 				9122DBD62586BA4A005D57ED /* Products */,
@@ -92,7 +93,6 @@
 		9122DBD72586BA4A005D57ED /* xApiIos */ = {
 			isa = PBXGroup;
 			children = (
-				9113BB7D258AAC6B00BB1080 /* xApiIos.entitlements */,
 				9122DC342587B176005D57ED /* AppExtensions.swift */,
 				9122DC232586FDCB005D57ED /* Models */,
 				9122DBF12586BAF6005D57ED /* Views */,
@@ -385,7 +385,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.9.5;
+				MARKETING_VERSION = 0.9.6;
 				PRODUCT_BUNDLE_IDENTIFIER = net.k3tzr.xApiIos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -409,7 +409,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.9.5;
+				MARKETING_VERSION = 0.9.6;
 				PRODUCT_BUNDLE_IDENTIFIER = net.k3tzr.xApiIos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -446,7 +446,7 @@
 			repositoryURL = "https://github.com/K3TZR/xClientIos.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.9.7;
+				minimumVersion = 0.9.8;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

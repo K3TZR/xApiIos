@@ -12,8 +12,7 @@ import xClientIos
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?               // the app's contentView window
-    var tester: Tester!                 // this app
-    var radioManager: RadioManager?     // xClientIos RadioManager
+//    var tester: Tester!                 // this app
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -21,18 +20,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 
         // instantiate the app
-        tester = Tester()
-//        //instantiate RadioManager with the app as its delegate
-//        radioManager = RadioManager(delegate: tester!)
-        // give the app a reference to RadioManager
-//        tester!.radioManager = radioManager
-
+        let tester = Tester()
+        let radioManager = RadioManager(delegate: tester as RadioManagerDelegate)
+        
         // Create the SwiftUI view that provides the window contents.
-        let contentView = ContentView()
-            .environmentObject(tester)
-//            .environmentObject(radioManager!)
-//            .environmentObject(Logger.sharedInstance)
-
+        let contentView = ContentView(tester: tester, radioManager: radioManager)
 
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
@@ -69,6 +61,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Called as the scene transitions from the foreground to the background.
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
+        
     }
 }
 

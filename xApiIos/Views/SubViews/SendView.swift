@@ -9,10 +9,9 @@ import SwiftUI
 import xClientIos
 
 struct SendView: View {
-    @EnvironmentObject var tester : Tester
+    @ObservedObject var tester : Tester
     @ObservedObject var radioManager : RadioManager
     
-
     var body: some View {
 
         HStack (spacing: 40) {
@@ -21,7 +20,7 @@ struct SendView: View {
                     tester.sent(command: tester.cmdToSend)}) {
                 Text("Send").frame(width: 40, alignment: .leading)}
                 
-            .disabled(!tester.isConnected)
+            .disabled(!radioManager.isConnected)
 
             TextField("Command to send", text: $tester.cmdToSend)
                 .background(Color(.secondarySystemBackground))
@@ -37,8 +36,7 @@ struct SendView: View {
 struct SendView_Previews: PreviewProvider {
 
     static var previews: some View {
-        SendView(radioManager: RadioManager())
-            .environmentObject(Tester())
+        SendView(tester: Tester(), radioManager: RadioManager(delegate: Tester() as RadioManagerDelegate))
             .previewLayout(.fixed(width: 2160 / 2.0, height: 1620 / 2.0))
     }
 }

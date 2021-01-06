@@ -50,7 +50,7 @@ enum FilterMessages : String, CaseIterable {
 // MARK: - Class definition
 // ----------------------------------------------------------------------------
 
-final class Tester :  ObservableObject, ApiDelegate, LoggerDelegate {    
+final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, LoggerDelegate {    
 
     // ----------------------------------------------------------------------------
     // MARK: - Static properties
@@ -64,19 +64,13 @@ final class Tester :  ObservableObject, ApiDelegate, LoggerDelegate {
     @Published var clearAtConnect       = false   { didSet {Defaults.clearAtConnect = clearAtConnect} }
     @Published var clearAtDisconnect    = false   { didSet {Defaults.clearAtDisconnect = clearAtDisconnect} }
     @Published var clearOnSend          = false   { didSet {Defaults.clearOnSend = clearOnSend} }
-    @Published var clientId             = ""      { didSet {Defaults.clientId = clientId} }
     @Published var cmdToSend            = ""
-    @Published var connectToFirstRadio  = false   { didSet {Defaults.connectToFirstRadio = connectToFirstRadio} }
-    @Published var enableGui            = false   { didSet {Defaults.enableGui = enableGui} }
-    @Published var enableSmartLink      = false   { didSet {Defaults.enableSmartLink = enableSmartLink} }
     @Published var fontSize             = 12      { didSet {Defaults.fontSize = fontSize} }
-    @Published var isConnected          = false
     @Published var showLogWindow        = false   { didSet {Defaults.showLogWindow = showLogWindow} }
     @Published var showPings            = false   { didSet {Defaults.showPings = showPings} }
     @Published var showReplies          = false   { didSet {Defaults.showReplies = showReplies} }
     @Published var showTimestamps       = false   { didSet {Defaults.showTimestamps = showTimestamps} }
     @Published var smartLinkAuth0Email  = ""      { didSet {Defaults.smartLinkAuth0Email = smartLinkAuth0Email} }
-    @Published var stationName          = Tester.kAppName
 
     @Published var filteredMessages     = [Message]()
     @Published var messagesFilterBy     : FilterMessages  = .none { didSet {filterCollection(of: .messages) ; Defaults.messagesFilterBy = messagesFilterBy.rawValue }}
@@ -94,14 +88,6 @@ final class Tester :  ObservableObject, ApiDelegate, LoggerDelegate {
     // ----------------------------------------------------------------------------
     // MARK: - Internal properties
     
-    var defaultConnection : String {
-        get { Defaults.defaultConnection }
-        set { Defaults.defaultConnection = newValue }
-    }
-    var defaultGuiConnection : String {
-        get { Defaults.defaultGuiConnection }
-        set { Defaults.defaultGuiConnection = newValue }
-    }
     
     // ----------------------------------------------------------------------------
     // MARK: - Private properties
@@ -210,6 +196,10 @@ final class Tester :  ObservableObject, ApiDelegate, LoggerDelegate {
         NotificationCenter.makeObserver(self, with: #selector(defaultsWereChanged), of: ClientIosNotificationType.defaultsWereChanged.rawValue)
         NotificationCenter.makeObserver(self, with: #selector(ClientIdWasAssigned), of: ClientIosNotificationType.ClientIdWasAssigned.rawValue)
         NotificationCenter.makeObserver(self, with: #selector(smartLinkEmailUpdated), of: ClientIosNotificationType.smartLinkEmailUpdated.rawValue)
+
+        NotificationCenter.makeObserver(self, with: #selector(willResignActive(_:)), of: UIApplication.willResignActiveNotification.rawValue)
+        NotificationCenter.makeObserver(self, with: #selector(willEnterForeground(_:)), of: UIApplication.willEnterForegroundNotification.rawValue)
+
     }
     
     @objc private func showMainView(notification: NSNotification){
@@ -237,6 +227,15 @@ final class Tester :  ObservableObject, ApiDelegate, LoggerDelegate {
             self.smartLinkAuth0Email = email
             _log("SmartLink email was updated: \(email)", .debug, #function, #file, #line)
         }
+    }
+
+    @objc private func willResignActive(_ note: Notification) {
+        if clearAtDisconnect { clearObjectsAndMessages() }
+        _log("App wil resign active", .debug, #function, #file, #line)
+    }
+
+    @objc private func willEnterForeground(_ note: Notification) {
+        _log("App wil enter foreground", .debug, #function, #file, #line)
     }
 
     // ----------------------------------------------------------------------------
@@ -507,7 +506,33 @@ final class Tester :  ObservableObject, ApiDelegate, LoggerDelegate {
     }
     
     // ----------------------------------------------------------------------------
-    // MARK: - ApiDelegate methods
+    // MARK: - RadioManagerDelegate
+
+    @Published var enableGui            = false   { didSet {Defaults.enableGui = enableGui} }
+    @Published var enableSmartLink      = false   { didSet {Defaults.enableSmartLink = enableSmartLink} }
+    @Published var connectToFirstRadio  = false   { didSet {Defaults.connectToFirstRadio = connectToFirstRadio} }
+    @Published var stationName          = Tester.kAppName
+    @Published var clientId             = ""      { didSet {Defaults.clientId = clientId} }
+
+    var defaultConnection : String {
+        get { Defaults.defaultConnection }
+        set { Defaults.defaultConnection = newValue }
+    }
+    var defaultGuiConnection : String {
+        get { Defaults.defaultGuiConnection }
+        set { Defaults.defaultGuiConnection = newValue }
+    }
+
+    public func willConnect() {
+        if clearAtConnect { clearObjectsAndMessages() }
+    }
+
+    public func willDisconnect() {
+        if clearAtDisconnect { clearObjectsAndMessages() }
+    }
+
+    // ----------------------------------------------------------------------------
+    // MARK: - ApiDelegate
     
     /// Process a sent message
     ///
