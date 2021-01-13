@@ -5,11 +5,11 @@
 //  Created by Douglas Adams on 8/9/20.
 //
 
+import Foundation
 import xLib6000
 import SwiftyUserDefaults
 import SwiftUI
 import xClientIos
-import Foundation
 
 typealias ObjectTuple = (color: UIColor, text: String)
 
@@ -55,9 +55,9 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
     // ----------------------------------------------------------------------------
     // MARK: - Static properties
     
-    public static let kDomainName = "net.k3tzr"
-    public static let kAppName = "xApiIos"
-    
+    public static let kDomainName       = "net.k3tzr"
+    public static let kAppName          = "xApiIos"
+
     // ----------------------------------------------------------------------------
     // MARK: - Published properties
     
@@ -70,7 +70,6 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
     @Published var showPings            = false   { didSet {Defaults.showPings = showPings} }
     @Published var showReplies          = false   { didSet {Defaults.showReplies = showReplies} }
     @Published var showTimestamps       = false   { didSet {Defaults.showTimestamps = showTimestamps} }
-    @Published var smartLinkAuth0Email  = ""      { didSet {Defaults.smartLinkAuth0Email = smartLinkAuth0Email} }
 
     @Published var filteredMessages     = [Message]()
     @Published var messagesFilterBy     : FilterMessages  = .none { didSet {filterCollection(of: .messages) ; Defaults.messagesFilterBy = messagesFilterBy.rawValue }}
@@ -79,29 +78,20 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
     @Published var filteredObjects      = [Object]()
     @Published var objectsFilterBy      : FilterObjects   = .none { didSet {filterCollection(of: .objects) ; Defaults.objectsFilterBy = objectsFilterBy.rawValue }}
     @Published var objectsFilterText    = ""                      { didSet {filterCollection(of: .objects) ; Defaults.objectsFilterText = objectsFilterText}}
-    
-    
-    
-
-    
-    
-    // ----------------------------------------------------------------------------
-    // MARK: - Internal properties
-    
-    
+        
     // ----------------------------------------------------------------------------
     // MARK: - Private properties
     
-    private var _api                  = Api.sharedInstance
-    private var _commandsIndex        = 0
-    private var _commandHistory       = [String]()
-    private let _log                  : (_ msg: String, _ level: MessageLevel, _ function: StaticString, _ file: StaticString, _ line: Int) -> Void
-    private var _messageNumber        = 0
-    private var _objectNumber         = 0
-    private let _objectQ              = DispatchQueue(label: "xApiIos.objectQ", attributes: [.concurrent])
-    private var _packets              : [DiscoveryPacket] { Discovery.sharedInstance.discoveryPackets }
-    private var _previousCommand      = ""
-    private var _startTimestamp       : Date?
+    private var _api                    = Api.sharedInstance
+    private var _commandsIndex          = 0
+    private var _commandHistory         = [String]()
+    private let _log                    : (_ msg: String, _ level: MessageLevel, _ function: StaticString, _ file: StaticString, _ line: Int) -> Void
+    private var _messageNumber          = 0
+    private var _objectNumber           = 0
+    private let _objectQ                = DispatchQueue(label: "xApiIos.objectQ", attributes: [.concurrent])
+    private var _packets                : [DiscoveryPacket] { Discovery.sharedInstance.discoveryPackets }
+    private var _previousCommand        = ""
+    private var _startTimestamp         : Date?
     
     // ----------------------------------------------------------------------------
     // MARK: - Private properties with concurrency protection
@@ -115,8 +105,8 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
         set { _objectQ.sync(flags: .barrier) { _objects = newValue } } }
     
     // Backing store, do not use
-    private var _messages       = [Message]()
-    private var _objects        = [Object]()
+    private var _messages   = [Message]()
+    private var _objects    = [Object]()
     
     // ----------------------------------------------------------------------------
     // MARK: - Initialization
@@ -129,7 +119,7 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
         clearOnSend         = Defaults.clearOnSend
         clientId            = Defaults.clientId
         enableGui           = Defaults.enableGui
-        enableSmartLink     = Defaults.enableSmartLink
+//        enableSmartLink     = Defaults.enableSmartLink
         fontSize            = Defaults.fontSize
         showLogWindow       = Defaults.showLogWindow
         showPings           = Defaults.showPings
@@ -150,7 +140,7 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
         defaultConnection       = Defaults.defaultConnection
         defaultGuiConnection    = Defaults.defaultGuiConnection
 
-        // support use of "Back to Main" button on LoggerView
+        // begin observations
         addNotifications()
         
         // receive delegate actions from the Api
@@ -193,40 +183,12 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
     
     private func addNotifications() {
         NotificationCenter.makeObserver(self, with: #selector(showMainView), of: ClientIosNotificationType.showMainView.rawValue)
-        NotificationCenter.makeObserver(self, with: #selector(defaultsWereChanged), of: ClientIosNotificationType.defaultsWereChanged.rawValue)
-        NotificationCenter.makeObserver(self, with: #selector(ClientIdWasAssigned), of: ClientIosNotificationType.ClientIdWasAssigned.rawValue)
-        NotificationCenter.makeObserver(self, with: #selector(smartLinkEmailUpdated), of: ClientIosNotificationType.smartLinkEmailUpdated.rawValue)
-
         NotificationCenter.makeObserver(self, with: #selector(willResignActive(_:)), of: UIApplication.willResignActiveNotification.rawValue)
         NotificationCenter.makeObserver(self, with: #selector(willEnterForeground(_:)), of: UIApplication.willEnterForegroundNotification.rawValue)
-
     }
     
     @objc private func showMainView(notification: NSNotification){
         DispatchQueue.main.async { self.showLogWindow = false }
-    }
-
-    @objc private func defaultsWereChanged(notification: NSNotification) {
-        if let tuple = notification.object as? DefaultsTuple {
-            defaultConnection = tuple.defaultConnection
-            defaultGuiConnection = tuple.defaultGuiConnection
-            connectToFirstRadio = tuple.connectToFirstRadio
-            _log("Defaults were changed: \(defaultConnection == "" ? "-- not set --" : defaultConnection ), \(defaultGuiConnection == "" ? "-- not set --" : defaultGuiConnection ), \(connectToFirstRadio)", .debug, #function, #file, #line)
-        }
-    }
-
-    @objc private func ClientIdWasAssigned(notification: NSNotification) {
-        if let id = notification.object as? String {
-            self.clientId = id
-            _log("Client Id was assigned: \(id)", .debug, #function, #file, #line)
-        }
-     }
-
-    @objc private func smartLinkEmailUpdated(notification: NSNotification) {
-        if let email = notification.object as? String {
-            self.smartLinkAuth0Email = email
-            _log("SmartLink email was updated: \(email)", .debug, #function, #file, #line)
-        }
     }
 
     @objc private func willResignActive(_ note: Notification) {
@@ -355,7 +317,7 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
             if radio.version.isNewApi {
                 
                 // newApi, Show all GuiClients of this Radio
-                for packet in _packets {
+                for packet in _packets where packet.isWan == radio.packet.isWan {
                     for guiClient in packet.guiClients {
                         
                         activeHandle = guiClient.handle
@@ -508,11 +470,13 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
     // ----------------------------------------------------------------------------
     // MARK: - RadioManagerDelegate
 
-    @Published var enableGui            = false   { didSet {Defaults.enableGui = enableGui} }
-    @Published var enableSmartLink      = false   { didSet {Defaults.enableSmartLink = enableSmartLink} }
-    @Published var connectToFirstRadio  = false   { didSet {Defaults.connectToFirstRadio = connectToFirstRadio} }
-    @Published var stationName          = Tester.kAppName
     @Published var clientId             = ""      { didSet {Defaults.clientId = clientId} }
+    @Published var connectToFirstRadio  = false   { didSet {Defaults.connectToFirstRadio = connectToFirstRadio} }
+    @Published var enableGui            = false   { didSet {Defaults.enableGui = enableGui} }
+//    @Published var enableSmartLink      = false   { didSet {Defaults.enableSmartLink = enableSmartLink} }
+    @Published var enableSmartLink      = true
+    @Published var smartLinkAuth0Email  = ""      { didSet {Defaults.smartLinkAuth0Email = smartLinkAuth0Email} }
+    @Published var stationName          = Tester.kAppName
 
     var defaultConnection : String {
         get { Defaults.defaultConnection }

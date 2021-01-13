@@ -16,20 +16,16 @@ struct BottomButtonsView: View {
         VStack(alignment: .leading) {
             HStack {
                 Stepper("Font Size", value: $tester.fontSize, in: 8...24).frame(width: 175)
-                
                 Spacer()
-
-                HStack (spacing: 30) {
+                HStack  {
                     Toggle("Clear on Connect", isOn: $tester.clearAtConnect).frame(width: 190)
                     Toggle("Clear on Disconnect", isOn: $tester.clearAtDisconnect).frame(width: 215)
                 }
                 Spacer()
-                
-                Button(action: {self.tester.clearObjectsAndMessages()}) {Text("Clear Now")}
+                Button("Clear Now", action: {self.tester.clearObjectsAndMessages()})
 
                 Spacer()
-                
-                Button( action: {tester.showLogWindow.toggle()}) {Text("Log Window")}
+                Button("Log Window", action: {tester.showLogWindow.toggle()})
             }
         }
     }

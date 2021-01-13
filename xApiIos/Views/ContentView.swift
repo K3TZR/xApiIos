@@ -9,66 +9,49 @@ import SwiftUI
 import xClientIos
 
 struct ContentView: View {
-//    @EnvironmentObject var tester: Tester
-    
     @ObservedObject var tester: Tester
     @ObservedObject var radioManager : RadioManager
-
-    var body: some View {
+        
+   var body: some View {
         
         if tester.showLogWindow {
-            VStack(alignment: .leading) {
-                Spacer()
-                LoggerView()
-            }
+            // LOG VIEW
+            LoggerView()
             .padding(.horizontal)
             .padding(.bottom, 10)
 
         } else {
+            // TESTER VIEW
             VStack(alignment: .leading) {
                 TopButtonsView(tester: tester, radioManager: radioManager)
-
                 SendView(tester: tester, radioManager: radioManager)
                 FiltersView(tester: tester)
-
+                
                 Divider().frame(height: 2).background(Color(.opaqueSeparator))
-
                 ObjectsView(objects: tester.filteredObjects, fontSize: tester.fontSize)
                 
                 Divider().frame(height: 4).background(Color(.systemBlue))
-
                 MessagesView(messages: tester.filteredMessages, showTimestamps: tester.showTimestamps, fontSize: tester.fontSize)
                 
                 Divider().frame(height: 2).background(Color(.opaqueSeparator))
-
                 BottomButtonsView(tester: tester)
             }
             .padding(.horizontal)
             
             // Sheet presentation
-            .sheet(isPresented: $radioManager.showSheet, onDismiss: {
-                if radioManager.showPickerView {
-                    radioManager.connect(to: radioManager.pickerSelection)
-                } else {
-                    print("TODO: Dismiss Auth0View")
-                }
-           }) {
-                if radioManager.showPickerView {
-                    PickerView()
-                        .environmentObject(radioManager)
-                } else {
-                    Auth0View()
-                        .environmentObject(radioManager)
+            .sheet(item: $radioManager.activeSheet) { sheetType in
+                switch sheetType {
+                case .picker:   PickerView()
+                    .environmentObject(radioManager)
+                    .onDisappear(perform: {radioManager.connect(to: radioManager.pickerSelection)} )
+                case .auth0:    Auth0View()
+                    .environmentObject(radioManager)
+                    .onDisappear(perform: {print("TODO: Dismiss Auth0View")} )
                 }
             }
 
-//            .sheet(isPresented: $radioManager.showSheet, onDismiss: { print("Sheet was dismissed") ; radioManager.chooseDefaults() }) {
-//                PickerView()
-//                    .environmentObject(radioManager)
-//            }
-            
             // MultiAlert presentation
-            .multiAlert(isPresented: $radioManager.showCurrentAlert, radioManager.currentAlert)
+            .multiAlert(isPresented: $radioManager.showAlert, radioManager.currentAlert)
         }
     }
 }

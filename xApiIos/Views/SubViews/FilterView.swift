@@ -1,5 +1,5 @@
 //
-//  ObjectFilterView.swift
+//  FilterView.swift
 //  xApiIos
 //
 //  Created by Douglas Adams on 8/10/20.
@@ -16,24 +16,25 @@ struct FilterView: View {
         HStack {
             if filterType == .messages {
                 Text("Filter messages by")
-                Picker(selection: $tester.messagesFilterBy, label: Text(tester.messagesFilterBy.rawValue).frame(width: 100)) {
+                Picker(tester.messagesFilterBy.rawValue, selection: $tester.messagesFilterBy) {
                     ForEach(FilterMessages.allCases, id: \.self) {
                         Text($0.rawValue)
                     }
-                }
+                }.frame(width: 90)
                 
             } else {
                 Text("Filter objects by")
-                Picker(selection: $tester.objectsFilterBy, label: Text(tester.objectsFilterBy.rawValue).frame(width: 100)) {
+                Picker(tester.objectsFilterBy.rawValue, selection: $tester.objectsFilterBy) {
                     ForEach(FilterObjects.allCases, id: \.self) {
                         Text($0.rawValue)
                     }
-                }
+                }.frame(width: 90)
                 
             }
             TextField("Filter text", text: filterType == .messages ? $tester.messagesFilterText : $tester.objectsFilterText)
                 .background(Color(.secondarySystemBackground))
                 .autocapitalization(.none)
+                .modifier(ClearButton(text: filterType == .messages ? $tester.messagesFilterText : $tester.objectsFilterText))
         }
         .pickerStyle(MenuPickerStyle())
     }

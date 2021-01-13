@@ -15,20 +15,41 @@ struct SendView: View {
     var body: some View {
 
         HStack (spacing: 40) {
-            Button(action: {
+            Button("Send", action: {
                     radioManager.send(command: tester.cmdToSend)
-                    tester.sent(command: tester.cmdToSend)}) {
-                Text("Send").frame(width: 40, alignment: .leading)}
+                    tester.sent(command: tester.cmdToSend)})
+                .frame(width: 40, alignment: .leading)
                 
             .disabled(!radioManager.isConnected)
-
+                
             TextField("Command to send", text: $tester.cmdToSend)
                 .background(Color(.secondarySystemBackground))
                 .autocapitalization(.none)
-
+                .modifier(ClearButton(text: $tester.cmdToSend))
+            
             Spacer()
             
             Toggle("Clear on Send", isOn: $tester.clearOnSend).frame(width: 170)
+        }
+    }
+}
+
+
+struct ClearButton: ViewModifier {
+    @Binding var text: String
+
+    public func body(content: Content) -> some View {
+        ZStack(alignment: .trailing)
+        {
+            content
+
+            if !text.isEmpty {
+                Button(action: { self.text = "" }) {
+                    Image(systemName: "x.circle")
+                        .foregroundColor(Color(UIColor.label))
+                }
+                .padding(.trailing, 8)
+            }
         }
     }
 }

@@ -29,14 +29,14 @@ struct MessagesView: View {
         if base.prefix(1) == "R" && base.contains("|0|") { color = Color(.systemGray) }
         if base.prefix(1) == "R" && !base.contains("|0|") { color = Color(.systemRed) }
         if base.prefix(2) == "S0" { color = Color(.systemOrange) }
-                
+        
         return color
     }
     
     var body: some View {
         
-        ScrollViewReader { scrollView in
-            ScrollView([.horizontal, .vertical], showsIndicators: true) {
+        ScrollView([.horizontal, .vertical], showsIndicators: true) {
+            ScrollViewReader { scrollView in
                 VStack (alignment: .leading) {
                     ForEach(messages) { message in
                         Text(showTimestamps(text: message.text))
@@ -45,11 +45,16 @@ struct MessagesView: View {
                             .foregroundColor( lineColor(message.text) )
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .onChange(of: messages.count, perform: { _ in
+                    if messages.count > 0 {
+                        scrollView.scrollTo(messages.last!.id + 1, anchor: .bottomLeading)
+                    }
+                })
             }
-            .onChange(of: messages.count, perform: { _ in
-                scrollView.scrollTo(messages.count+1, anchor: .bottomLeading)
-            })
-        }.font(.system(size: CGFloat(fontSize), weight: .regular, design: .monospaced))
+        }
+        
+        .font(.system(size: CGFloat(fontSize), weight: .regular, design: .monospaced))
     }
 }
 

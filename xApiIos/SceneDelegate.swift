@@ -1,6 +1,6 @@
 //
 //  SceneDelegate.swift
-//  TestIos
+//  xApiIos
 //
 //  Created by Douglas Adams on 12/13/20.
 //
@@ -12,14 +12,13 @@ import xClientIos
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?               // the app's contentView window
-//    var tester: Tester!                 // this app
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 
-        // instantiate the app
+        // instantiate the app and give it access to the RadioManager
         let tester = Tester()
         let radioManager = RadioManager(delegate: tester as RadioManagerDelegate)
         

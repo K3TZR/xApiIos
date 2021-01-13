@@ -12,65 +12,40 @@ import xClientIos
 struct TopButtonsView: View {
     @ObservedObject var tester : Tester
     @ObservedObject var radioManager : RadioManager
-        
+    
     var body: some View {
         
         VStack(alignment: .leading) {
-            HStack (spacing: 30){
+            HStack (spacing: 20){
                 // Top row
-                Button(action: {radioManager.startStop()} ) {
-                    Text(radioManager.isConnected ? "Stop" : "Start").frame(width: 50, alignment: .leading)
-                }                
-                .help("Using the Default connection type")
-                .padding(.bottom, 50)
-
-//                Spacer()
+                Button(radioManager.isConnected ? "Stop" : "Start", action: {radioManager.startStop()} )
+                    .frame(width: 50, alignment: .leading)
+                    .help("Using the Default connection type")
                 
-                VStack (alignment: .leading) {
-                    Toggle(isOn: $tester.enableGui) {
-                        Text("As Gui") }
-                    Toggle(isOn: $tester.showTimestamps) {
-                        Text("Show Times") }.padding(.bottom, 10)
-                }.frame(width: 150)
+                Toggle("As Gui", isOn: $tester.enableGui).frame(width: 110)
+                Toggle("Show Times", isOn: $tester.showTimestamps).frame(width: 150)
                 
-                VStack (alignment: .leading) {
-                    Toggle(isOn: $tester.showPings) {
-                        Text("Show Pings")}
-                        .padding(.top, 40)
-                        .padding(.bottom, 10)
-                }.frame(width: 160)
-                
-                VStack (alignment: .leading) {
-                    Toggle(isOn: $tester.showReplies) {
-                        Text("Show Replies")}
-                        .padding(.top, 40)
-                        .padding(.bottom, 10)
-                }.frame(width: 190)
-                
-               Spacer()
-                
+                Toggle("Show Pings", isOn: $tester.showPings).frame(width: 150)
+                                
+                Toggle("Show Replies", isOn: $tester.showReplies).frame(width: 160)
+                Spacer()
                 VStack {
                     Text("SmartLink")
-                    Button(action: { radioManager.smartLinkLoginLogout() }) {
-                        Text(radioManager.smartLinkIsLoggedIn ? "Logout" : "Login")
-                    }.padding(.bottom, 30)
-                }
-
+                    Button(radioManager.smartLinkIsLoggedIn ? "Logout" : "Login", action: { radioManager.smartLinkLoginLogout() })
+                        .frame(width: 100)
+                        .disabled(radioManager.isConnected)
+                }.background(Color(.secondarySystemBackground))
                 Spacer()
-                
-                Button(action: { radioManager.chooseDefaults()
-                }) {
-                    Text("Defaults")
-                }
-                .padding(.bottom, 50)
-
+                Button("Defaults", action: { radioManager.chooseDefaults()})
+                    .disabled(radioManager.isConnected)
             }
         }
+
     }
 }
 
 struct TopButtonsView_Previews: PreviewProvider {
-
+    
     static var previews: some View {
         ContentView(tester: Tester(), radioManager: RadioManager(delegate: Tester() as RadioManagerDelegate) )
             .previewLayout(.fixed(width: 2160 / 2.0, height: 1620 / 2.0))
