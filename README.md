@@ -3,8 +3,8 @@
 #### API Explorer for Flex (TM) 6000 series radios (SwiftUI iOS version)
 
 ##### Built on:
-*  macOS 11.1
-*  Xcode 12.3 (12C33) 
+*  macOS 11.2.2
+*  Xcode 12.4 (12D4e) 
 *  Swift 5.3 / SwiftUI
 
 ##### Runs on:
