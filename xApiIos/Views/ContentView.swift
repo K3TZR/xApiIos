@@ -10,13 +10,13 @@ import xClientIos
 
 struct ContentView: View {
     @ObservedObject var tester: Tester
-    @ObservedObject var radioManager : RadioManager
-        
+    @ObservedObject var radioManager: RadioManager
+
    var body: some View {
-        
+
         if tester.showLogWindow {
             // LOG VIEW
-            LoggerView()
+            LoggerView().environmentObject(Logger.sharedInstance)
             .padding(.horizontal)
             .padding(.bottom, 10)
 
@@ -26,32 +26,35 @@ struct ContentView: View {
                 TopButtonsView(tester: tester, radioManager: radioManager)
                 SendView(tester: tester, radioManager: radioManager)
                 FiltersView(tester: tester)
-                
+
                 Divider().frame(height: 2).background(Color(.opaqueSeparator))
                 ObjectsView(objects: tester.filteredObjects, fontSize: tester.fontSize)
-                
+
                 Divider().frame(height: 4).background(Color(.systemBlue))
                 MessagesView(messages: tester.filteredMessages, showTimestamps: tester.showTimestamps, fontSize: tester.fontSize)
-                
+
                 Divider().frame(height: 2).background(Color(.opaqueSeparator))
                 BottomButtonsView(tester: tester)
             }
             .padding(.horizontal)
-            
+
             // Sheet presentation
             .sheet(item: $radioManager.activeSheet) { sheetType in
                 switch sheetType {
-                case .picker:   PickerView()
+                case .radioPicker:   RadioPickerView()
                     .environmentObject(radioManager)
-                    .onDisappear(perform: {radioManager.connect(to: radioManager.pickerSelection)} )
-                case .auth0:    Auth0View()
+                    .onDisappear(perform: {radioManager.connect(to: radioManager.pickerSelection)})
+                case .smartlinkAuthorization:    SmartlinkAuthorizationView()
                     .environmentObject(radioManager)
-                    .onDisappear(perform: {print("TODO: Dismiss Auth0View")} )
-                }
+                    .onDisappear(perform: {print("TODO: Dismiss Auth0View")})
+                case .smartlinkStatus:    SmartlinkStatusView()
+                    .environmentObject(radioManager)
+                    .onDisappear(perform: {print("TODO: Dismiss Auth0View")})
+               }
             }
 
-            // MultiAlert presentation
-            .multiAlert(isPresented: $radioManager.showAlert, radioManager.currentAlert)
+            // CustomAlert presentation
+            .customAlert(isPresented: $radioManager.showAlert, radioManager.currentAlert)
         }
     }
 }

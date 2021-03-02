@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct FiltersView: View {
-    @ObservedObject var tester : Tester
+    @ObservedObject var tester: Tester
 
     var body: some View {
-        HStack (spacing: 40) {
+        HStack(spacing: 40) {
             FilterView(filterType: .objects, tester: tester)
             FilterView(filterType: .messages, tester: tester)
         }
@@ -22,6 +22,7 @@ struct FiltersView_Previews: PreviewProvider {
 
     static var previews: some View {
         FiltersView(tester: Tester())
+            .previewDevice("iPad (8th generation)")
             .previewLayout(.fixed(width: 2160 / 2.0, height: 1620 / 2.0))
     }
 }

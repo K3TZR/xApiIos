@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct FilterView: View {
-    let filterType : FilterType
-    @ObservedObject var tester : Tester
-    
+    let filterType: FilterType
+    @ObservedObject var tester: Tester
+
     var body: some View {
-        
+
         HStack {
             if filterType == .messages {
                 Text("Filter messages by")
@@ -21,7 +21,7 @@ struct FilterView: View {
                         Text($0.rawValue)
                     }
                 }.frame(width: 90)
-                
+
             } else {
                 Text("Filter objects by")
                 Picker(tester.objectsFilterBy.rawValue, selection: $tester.objectsFilterBy) {
@@ -29,7 +29,7 @@ struct FilterView: View {
                         Text($0.rawValue)
                     }
                 }.frame(width: 90)
-                
+
             }
             TextField("Filter text", text: filterType == .messages ? $tester.messagesFilterText : $tester.objectsFilterText)
                 .background(Color(.secondarySystemBackground))
@@ -41,10 +41,11 @@ struct FilterView: View {
 }
 
 struct FilterView_Previews: PreviewProvider {
-    
+
     static var previews: some View {
         FilterView(filterType: .messages, tester: Tester())
 //            .environmentObject(Tester())
+            .previewDevice("iPad (8th generation)")
             .previewLayout(.fixed(width: 2160 / 2.0, height: 1620 / 2.0))
     }
 }

@@ -9,15 +9,15 @@
 import SwiftUI
 
 struct BottomButtonsView: View {
-    @ObservedObject var tester : Tester
-    
+    @ObservedObject var tester: Tester
+
     var body: some View {
-        
+
         VStack(alignment: .leading) {
             HStack {
                 Stepper("Font Size", value: $tester.fontSize, in: 8...24).frame(width: 175)
                 Spacer()
-                HStack  {
+                HStack {
                     Toggle("Clear on Connect", isOn: $tester.clearAtConnect).frame(width: 190)
                     Toggle("Clear on Disconnect", isOn: $tester.clearAtDisconnect).frame(width: 215)
                 }
@@ -35,6 +35,7 @@ struct BottomButtonsView_Previews: PreviewProvider {
 
     static var previews: some View {
         BottomButtonsView(tester: Tester())
+            .previewDevice("iPad (8th generation)")
             .previewLayout(.fixed(width: 2160 / 2.0, height: 1620 / 2.0))
     }
 }

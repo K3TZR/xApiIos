@@ -13,14 +13,14 @@ import xClientIos
 
 typealias ObjectTuple = (color: UIColor, text: String)
 
-struct Message : Identifiable {
+struct Message: Identifiable {
     var id = 0
-    var text  = ""
+    var text = ""
 }
 
-struct Object : Identifiable {
+struct Object: Identifiable {
     var id = 0
-    var line : ObjectTuple = (.black, "")
+    var line: ObjectTuple = (.black, "")
 }
 
 enum FilterType: String {
@@ -28,14 +28,14 @@ enum FilterType: String {
     case objects
 }
 
-enum FilterObjects : String, CaseIterable {
+enum FilterObjects: String, CaseIterable {
     case none
     case prefix
     case includes
     case excludes
 }
 
-enum FilterMessages : String, CaseIterable {
+enum FilterMessages: String, CaseIterable {
     case none
     case prefix
     case includes
@@ -46,52 +46,73 @@ enum FilterMessages : String, CaseIterable {
     case S0
 }
 
-// ----------------------------------------------------------------------------
-// MARK: - Class definition
-// ----------------------------------------------------------------------------
-
-final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, LoggerDelegate {    
-
-    // ----------------------------------------------------------------------------
-    // MARK: - Static properties
-    
-    public static let kDomainName       = "net.k3tzr"
-    public static let kAppName          = "xApiIos"
-
+final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
     // ----------------------------------------------------------------------------
     // MARK: - Published properties
     
-    @Published var clearAtConnect       = false   { didSet {Defaults.clearAtConnect = clearAtConnect} }
-    @Published var clearAtDisconnect    = false   { didSet {Defaults.clearAtDisconnect = clearAtDisconnect} }
-    @Published var clearOnSend          = false   { didSet {Defaults.clearOnSend = clearOnSend} }
+    @Published var clearAtConnect       = false { didSet {Defaults.clearAtConnect = clearAtConnect} }
+    @Published var clearAtDisconnect    = false { didSet {Defaults.clearAtDisconnect = clearAtDisconnect} }
+    @Published var clearOnSend          = false { didSet {Defaults.clearOnSend = clearOnSend} }
     @Published var cmdToSend            = ""
-    @Published var fontSize             = 12      { didSet {Defaults.fontSize = fontSize} }
-    @Published var showLogWindow        = false   { didSet {Defaults.showLogWindow = showLogWindow} }
-    @Published var showPings            = false   { didSet {Defaults.showPings = showPings} }
-    @Published var showReplies          = false   { didSet {Defaults.showReplies = showReplies} }
-    @Published var showTimestamps       = false   { didSet {Defaults.showTimestamps = showTimestamps} }
-
-    @Published var filteredMessages     = [Message]()
-    @Published var messagesFilterBy     : FilterMessages  = .none { didSet {filterCollection(of: .messages) ; Defaults.messagesFilterBy = messagesFilterBy.rawValue }}
-    @Published var messagesFilterText   = ""                      { didSet {filterCollection(of: .messages) ; Defaults.messagesFilterText = messagesFilterText }}
+    @Published var connectToFirstRadio  = false { didSet {Defaults.connectToFirstRadio = connectToFirstRadio} }
+    @Published var enableGui            = false { didSet {Defaults.enableGui = enableGui} }
+    @Published var enablePinging        = false { didSet {Defaults.enablePinging = enablePinging} }
+    @Published var fontSize             = 12 { didSet {Defaults.fontSize = fontSize} }
+    @Published var showLogWindow        = false
+    @Published var showPings            = false { didSet {Defaults.showPings = showPings} }
+    @Published var showReplies          = false { didSet {Defaults.showReplies = showReplies} }
+    @Published var showTimestamps       = false { didSet {Defaults.showTimestamps = showTimestamps} }
     
-    @Published var filteredObjects      = [Object]()
-    @Published var objectsFilterBy      : FilterObjects   = .none { didSet {filterCollection(of: .objects) ; Defaults.objectsFilterBy = objectsFilterBy.rawValue }}
-    @Published var objectsFilterText    = ""                      { didSet {filterCollection(of: .objects) ; Defaults.objectsFilterText = objectsFilterText}}
-        
+    @Published var filteredMessages                 = [Message]()
+    @Published var messagesFilterBy: FilterMessages = .none { didSet {filterCollection(of: .messages) ; Defaults.messagesFilterBy = messagesFilterBy.rawValue }}
+    @Published var messagesFilterText               = "" { didSet {filterCollection(of: .messages) ; Defaults.messagesFilterText = messagesFilterText }}
+    @Published var messagesScrollTo: CGPoint?
+    @Published var filteredObjects                  = [Object]()
+    @Published var objectsFilterBy: FilterObjects   = .none { didSet {filterCollection(of: .objects) ; Defaults.objectsFilterBy = objectsFilterBy.rawValue }}
+    @Published var objectsFilterText                = "" { didSet {filterCollection(of: .objects) ; Defaults.objectsFilterText = objectsFilterText}}
+
+    // ----------------------------------------------------------------------------
+    // MARK: - Internal properties
+    
+    var activePacket: DiscoveryPacket?
+    var clientId: String? {
+        get { Defaults.clientId }
+        set { Defaults.clientId = newValue }
+    }
+    var defaultConnection: String? {
+        get { Defaults.defaultConnection }
+        set { Defaults.defaultConnection = newValue }
+    }
+    var defaultGuiConnection: String? {
+        get { Defaults.defaultGuiConnection }
+        set { Defaults.defaultGuiConnection = newValue }
+    }
+    var isConnected  = false
+    var smartlinkAuth0Email: String? {
+        get { Defaults.smartlinkAuth0Email }
+        set { Defaults.smartlinkAuth0Email = newValue }
+    }
+    var smartlinkEnabled: Bool {
+        get { Defaults.smartlinkEnabled }
+        set { Defaults.smartlinkEnabled = newValue }
+    }
+    var smartlinkUserImage: UIImage?
+    var smartlinkTestStatus = false
+    var stationName  = ""
+    
     // ----------------------------------------------------------------------------
     // MARK: - Private properties
     
-    private var _api                    = Api.sharedInstance
-    private var _commandsIndex          = 0
-    private var _commandHistory         = [String]()
-    private let _log                    : (_ msg: String, _ level: MessageLevel, _ function: StaticString, _ file: StaticString, _ line: Int) -> Void
-    private var _messageNumber          = 0
-    private var _objectNumber           = 0
-    private let _objectQ                = DispatchQueue(label: "xApiIos.objectQ", attributes: [.concurrent])
-    private var _packets                : [DiscoveryPacket] { Discovery.sharedInstance.discoveryPackets }
-    private var _previousCommand        = ""
-    private var _startTimestamp         : Date?
+    private var _api                  = Api.sharedInstance
+    private var _commandsIndex        = 0
+    private var _commandHistory       = [String]()
+    private let _log: (_ msg: String, _ level: MessageLevel, _ function: StaticString, _ file: StaticString, _ line: Int) -> Void
+    private var _messageNumber        = 0
+    private var _objectNumber         = 0
+    private let _objectQ              = DispatchQueue(label: AppDelegate.kAppName + ".objectQ", attributes: [.concurrent])
+    private var _packets: [DiscoveryPacket] { Discovery.sharedInstance.discoveryPackets }
+    private var _previousCommand      = ""
+    private var _startTimestamp: Date?
     
     // ----------------------------------------------------------------------------
     // MARK: - Private properties with concurrency protection
@@ -105,50 +126,85 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
         set { _objectQ.sync(flags: .barrier) { _objects = newValue } } }
     
     // Backing store, do not use
-    private var _messages   = [Message]()
-    private var _objects    = [Object]()
+    private var _messages       = [Message]()
+    private var _objects        = [Object]()
     
     // ----------------------------------------------------------------------------
     // MARK: - Initialization
     
     init() {
-        
-        // restore Defaults
-        clearAtConnect      = Defaults.clearAtConnect
-        clearAtDisconnect   = Defaults.clearAtDisconnect
-        clearOnSend         = Defaults.clearOnSend
-        clientId            = Defaults.clientId
-        enableGui           = Defaults.enableGui
-//        enableSmartLink     = Defaults.enableSmartLink
-        fontSize            = Defaults.fontSize
-        showLogWindow       = Defaults.showLogWindow
-        showPings           = Defaults.showPings
-        showReplies         = Defaults.showReplies
-        showTimestamps      = Defaults.showTimestamps
-        smartLinkAuth0Email = Defaults.smartLinkAuth0Email
+        // initialize @Published properties
+        clearAtConnect       = Defaults.clearAtConnect
+        clearAtDisconnect    = Defaults.clearAtDisconnect
+        clearOnSend          = Defaults.clearOnSend
+        connectToFirstRadio  = Defaults.connectToFirstRadio
+        enableGui            = Defaults.enableGui
+        enablePinging        = Defaults.enablePinging
+        fontSize             = Defaults.fontSize
+        showPings            = Defaults.showPings
+        showReplies          = Defaults.showReplies
+        showTimestamps       = Defaults.showTimestamps
 
-        messagesFilterBy    = FilterMessages(rawValue: Defaults.messagesFilterBy) ?? .none
-        messagesFilterText  = Defaults.messagesFilterText
-        objectsFilterBy     = FilterObjects(rawValue: Defaults.objectsFilterBy) ?? .none
-        objectsFilterText   = Defaults.objectsFilterText
+        messagesFilterBy     = FilterMessages(rawValue: Defaults.messagesFilterBy) ?? .none
+        messagesFilterText   = Defaults.messagesFilterText
+        objectsFilterBy      = FilterObjects(rawValue: Defaults.objectsFilterBy) ?? .none
+        objectsFilterText    = Defaults.objectsFilterText
         
-        // initialize the Logger and give xLib6000 access to it
+        // initialize and configure the Logger
         _log = Logger.sharedInstance.logMessage
+        
+        // give the Api access to our logger
         LogProxy.sharedInstance.delegate = Logger.sharedInstance
         
-        // setup defaults for each connection type
-        defaultConnection       = Defaults.defaultConnection
-        defaultGuiConnection    = Defaults.defaultGuiConnection
-
-        // begin observations
-        addNotifications()
+//        openLogWindow()
         
+        // is there a saved Client ID?
+        if clientId == nil {
+            // NO, assign one
+            clientId = UUID().uuidString
+            _log("Tester: ClientId created - \(clientId!)", .debug, #function, #file, #line)
+        }
+//        defaultConnection     = Defaults.defaultConnection
+//        defaultGuiConnection  = Defaults.defaultGuiConnection
+
         // receive delegate actions from the Api
         _api.testerDelegate = self
+        
+        addObservations()
+    }
+    
+    // ----------------------------------------------------------------------------
+    // MARK: - Internal methods (Tester related)
+           
+    /// A command  was sent to the Radio
+    ///
+    func sent(command: String) {
+        guard command.isEmpty == false else { return }
+
+        if command != _previousCommand { _commandHistory.append(command) }
+
+        _previousCommand = command
+        _commandsIndex = _commandHistory.count - 1
+
+        // optionally clear the Command field
+        if clearOnSend { DispatchQueue.main.async { self.cmdToSend = "" }}
     }
 
-    // ----------------------------------------------------------------------------
-    // MARK: -  Internal methods (Tester related)
+//    func openLogWindow() {
+//        if showLogWindow {
+//
+//            if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
+//                appDelegate.showLogWindow(showLogWindow)
+//            }
+//        }
+//    }
+//
+//    func toggleLogWindow() {
+//        showLogWindow.toggle()
+//        if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
+//            appDelegate.showLogWindow(showLogWindow)
+//        }
+//    }
     
     /// Clear the object and messages areas
     ///
@@ -164,10 +220,13 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
         }
     }
     
-    /// A command  was sent to the Radio
+    /// Send a command to the Radio
     ///
-    func sent(command: String) {
-        guard command != "" else { return }
+    func sendCommand(_ command: String) {
+        guard command.isEmpty == false else { return }
+        
+        // send the command to the Radio via TCP
+        _api.radio!.sendCommand( command )
         
         if command != _previousCommand { _commandHistory.append(command) }
         
@@ -177,34 +236,26 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
         // optionally clear the Command field
         if clearOnSend { DispatchQueue.main.async { self.cmdToSend = "" }}
     }
-
-    // ----------------------------------------------------------------------------
-    // MARK: -  Notifications
     
-    private func addNotifications() {
-        NotificationCenter.makeObserver(self, with: #selector(showMainView), of: ClientIosNotificationType.showMainView.rawValue)
-        NotificationCenter.makeObserver(self, with: #selector(willResignActive(_:)), of: UIApplication.willResignActiveNotification.rawValue)
-        NotificationCenter.makeObserver(self, with: #selector(willEnterForeground(_:)), of: UIApplication.willEnterForegroundNotification.rawValue)
-    }
-    
-    @objc private func showMainView(notification: NSNotification){
-        DispatchQueue.main.async { self.showLogWindow = false }
-    }
-
-    @objc private func willResignActive(_ note: Notification) {
-        if clearAtDisconnect { clearObjectsAndMessages() }
-        _log("App wil resign active", .debug, #function, #file, #line)
-    }
-
-    @objc private func willEnterForeground(_ note: Notification) {
-        _log("App wil enter foreground", .debug, #function, #file, #line)
-    }
-
-    // ----------------------------------------------------------------------------
-    // MARK: -  Private methods (common to Messages and Objects)
-    
-    /// Filter the message and object collections
+    /// Adjust the font size larger or smaller (within limits)
+    /// - Parameter larger:           larger?
     ///
+    func fontSize(larger: Bool) {
+        // incr / decr the size
+        var newSize =  Defaults.fontSize + (larger ? +1 : -1)
+        // subject to limits
+        if larger {
+            if newSize > Defaults.fontMaxSize { newSize = Defaults.fontMaxSize }
+        } else {
+            if newSize < Defaults.fontMinSize { newSize = Defaults.fontMinSize }
+        }
+        fontSize = newSize
+    }
+    
+    // ----------------------------------------------------------------------------
+    // MARK: - Private methods (common to Messages and Objects)
+        
+    /// Filter the message and object collections
     /// - Parameter type:     object type
     ///
     private func filterCollection(of type: FilterType) {
@@ -220,8 +271,7 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
             case .status:     filteredMessages =  messages.filter { $0.text.dropFirst(9).prefix(1) == "S" && $0.text.dropFirst(10).prefix(1) != "0"}
             case .reply:      filteredMessages =  messages.filter { $0.text.dropFirst(9).prefix(1) == "R" }
             }
-        }
-        else {
+        } else {
             switch objectsFilterBy {
             
             case .none:       filteredObjects = objects
@@ -233,7 +283,7 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
     }
     
     // ----------------------------------------------------------------------------
-    // MARK: -  Private methods (Messages-related)
+    // MARK: - Private methods (Messages-related)
     
     /// Add an entry to the messages collection
     /// - Parameter text:       the text of the entry
@@ -272,7 +322,7 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
     }
     
     // ----------------------------------------------------------------------------
-    // MARK: -  Private methods (Objects-related)
+    // MARK: - Private methods (Objects-related)
     
     /// Add an entry to the messages collection
     /// - Parameters:
@@ -299,7 +349,7 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
         _objects.removeAll()
         _objectNumber = 0
         
-        var activeHandle : Handle = 0
+        var activeHandle: Handle = 0
         
         // Radio
         if let radio = Api.sharedInstance.radio {
@@ -307,50 +357,73 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
             var color = UIColor.systemGreen
             
             // Show the connected Radio
-            self.appendObject(color, "Radio (\(radio.packet.isWan ? "SmartLink" : "Local"))  name=\(radio.nickname)  model=\(radio.packet.model)  serial=\(radio.packet.serialNumber)  version=\(radio.packet.firmwareVersion)  ip=\(radio.packet.publicIp)" +
-                                "  atu=\(Api.sharedInstance.radio!.atuPresent ? "Yes" : "No")  gps=\(Api.sharedInstance.radio!.gpsPresent ? "Yes" : "No")" +
+            self.appendObject(color, "Radio (\(radio.packet.isWan ? "SmartLink" : "Local"))" +
+                                "  name=\(radio.nickname)  model=\(radio.packet.model)" +
+                                "  serial=\(radio.packet.serialNumber)" +
+                                "  version=\(radio.packet.firmwareVersion)" +
+                                "  ip=\(radio.packet.publicIp)" +
+                                "  atu=\(Api.sharedInstance.radio!.atuPresent ? "Yes" : "No")" +
+                                "  gps=\(Api.sharedInstance.radio!.gpsPresent ? "Yes" : "No")" +
                                 "  scu's=\(Api.sharedInstance.radio!.numberOfScus)")
-            
-            self.appendObject(UIColor.systemBlue, "-------------------------------------------------------------------------------------------------------------------------------------------------------------------")
-            
-            // what version is the Radio?
+
+            self.appendObject(UIColor.systemBlue, String(repeating: "-", count: 200))
+
+            // what verion is the Radio?
             if radio.version.isNewApi {
                 
-                // newApi, Show all GuiClients of this Radio
-                for packet in _packets where packet.isWan == radio.packet.isWan {
+                // newApi
+                for packet in _packets where packet.isWan == activePacket?.isWan {
                     for guiClient in packet.guiClients {
                         
                         activeHandle = guiClient.handle
                         
-                        // Uniquely color the one representing this app (purple vs red for others)
                         color = UIColor.systemRed
                         if enableGui == false && guiClient.clientId != nil && guiClient.clientId == radio.boundClientId { color = UIColor.systemPurple }
                         if enableGui == true  && guiClient.handle == _api.connectionHandle { color = UIColor.systemPurple }
                         
-                        self.appendObject(color, "Gui Client     station = \(guiClient.station.padTo(15))  handle = \(guiClient.handle.hex)  id = \(guiClient.clientId ?? "unknown")  localPtt = \(guiClient.isLocalPtt ? "Yes" : "No ")  available = \(radio.packet.status.lowercased() == "available" ? "Yes" : "No ")  program = \(guiClient.program)")
-                        
-                        self.addSubsidiaryObjects(activeHandle, radio, UIColor.label)
-                        self.appendObject(UIColor.systemBlue, "-------------------------------------------------------------------------------------------------------------------------------------------------------------------")
+                        self.appendObject(color, "Gui Client     station = \(guiClient.station.padTo(15))" +
+                                            "  handle = \(guiClient.handle.hex)" +
+                                            "  id = \(guiClient.clientId ?? "unknown")" +
+                                            "  localPtt = \(guiClient.isLocalPtt ? "Yes" : "No ")" +
+                                            "  available = \(radio.packet.status.lowercased() == "available" ? "Yes" : "No ")" +
+                                            "  program = \(guiClient.program)")
+
+                        self.addStreamObjects(activeHandle, radio, UIColor.label)
+                        self.addPanadapterObjects(activeHandle, radio, UIColor.label)
+                        self.appendObject(UIColor.systemBlue, String(repeating: "-", count: 200))
                     }
                 }
                 
             } else {
                 // oldApi
-                self.addSubsidiaryObjects(activeHandle, radio, color)
+                self.addStreamObjects(activeHandle, radio, UIColor.label)
+                self.addPanadapterObjects(activeHandle, radio, UIColor.label)
             }
             color = UIColor.systemGray.withAlphaComponent(0.8)
             
             // OpusAudioStream
             for (_, stream) in radio.opusAudioStreams {
-                self.appendObject(color, "Opus           id = \(stream.id.hex)  rx = \(stream.rxEnabled)  rx stopped = \(stream.rxStopped)  tx = \(stream.txEnabled)  ip = \(stream.ip)  port = \(stream.port)")
+                self.appendObject(color, "Opus           id = \(stream.id.hex)" +
+                                    "  rx = \(stream.rxEnabled)" +
+                                    "  rx stopped = \(stream.rxStopped)" +
+                                    "  tx = \(stream.txEnabled)" +
+                                    "  ip = \(stream.ip)" +
+                                    "  port = \(stream.port)")
             }
             // AudioStream without a Slice
             for (_, stream) in radio.audioStreams where stream.slice == nil {
-                self.appendObject(color, "Audio          id = \(stream.id.hex)  ip = \(stream.ip)  port = \(stream.port)  slice = -not assigned-")
+                self.appendObject(color, "Audio          id = \(stream.id.hex)" +
+                                    "  ip = \(stream.ip)" +
+                                    "  port = \(stream.port)" +
+                                    "  slice = -not assigned-")
             }
             // Tnfs
             for (_, tnf) in radio.tnfs {
-                self.appendObject(color, "Tnf            id = \(tnf.id)  frequency = \(tnf.frequency)  width = \(tnf.width)  depth = \(tnf.depth)  permanent = \(tnf.permanent)")
+                self.appendObject(color, "Tnf            id = \(tnf.id)" +
+                                    "  frequency = \(tnf.frequency)" +
+                                    "  width = \(tnf.width)" +
+                                    "  depth = \(tnf.depth)" +
+                                    "  permanent = \(tnf.permanent)")
             }
             // Amplifiers
             for (_, amplifier) in radio.amplifiers {
@@ -366,7 +439,10 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
             }
             // Xvtrs
             for (_, xvtr) in radio.xvtrs {
-                self.appendObject(color, "Xvtr           id = \(xvtr.id)  rf frequency = \(xvtr.rfFrequency.hzToMhz)  if frequency = \(xvtr.ifFrequency.hzToMhz)  valid = \(xvtr.isValid.asTrueFalse)")
+                self.appendObject(color, "Xvtr           id = \(xvtr.id)" +
+                                    "  rf frequency = \(xvtr.rfFrequency.hzToMhz)" +
+                                    "  if frequency = \(xvtr.ifFrequency.hzToMhz)" +
+                                    "  valid = \(xvtr.isValid.asTrueFalse)")
             }
             // other Meters (non "slc")
             let sortedMeters = radio.meters.sorted(by: {
@@ -374,68 +450,116 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
                     ( $1.value.source.prefix(3), Int($1.value.group.suffix(3), radix: 10) ?? 0, $1.value.id )
             })
             for (_, meter) in sortedMeters where !meter.source.hasPrefix("slc") {
-                self.appendObject(color, "Meter          source = \(meter.source.prefix(3))  group = \(("00" + meter.group).suffix(3))  id = \(String(format: "%03d", meter.id))  name = \(meter.name.padTo(12))  units = \(meter.units.padTo(5))  low = \(String(format: "% 7.2f", meter.low))  high = \(String(format: "% 7.2f", meter.high))  fps = \(String(format: "% 3d", meter.fps))  desc = \(meter.desc)  ")
+                self.appendObject(color, "Meter          source = \(meter.source.prefix(3))" +
+                                    "  group = \(("00" + meter.group).suffix(3))" +
+                                    "  id = \(String(format: "%03d", meter.id))" +
+                                    "  name = \(meter.name.padTo(12))" +
+                                    "  units = \(meter.units.padTo(5))" +
+                                    "  low = \(String(format: "% 7.2f", meter.low))" +
+                                    "  high = \(String(format: "% 7.2f", meter.high))" +
+                                    "  fps = \(String(format: "% 3d", meter.fps))" +
+                                    "  desc = \(meter.desc)  ")
             }
+
         }
     }
     
-    /// Add subsidiary objects to the Objects array
+    /// Add stream objects to the Objects array
     /// - Parameters:
     ///   - activeHandle:       a connection handle
     ///   - radio:              the active radio
     ///   - color:              an NSColor for the text
     ///
-    private func addSubsidiaryObjects(_ activeHandle: Handle, _ radio: Radio, _ color: UIColor) {
-        
+    private func addStreamObjects(_ activeHandle: Handle, _ radio: Radio, _ color: UIColor) {
         // MicAudioStream
         for (_, stream) in radio.micAudioStreams where stream.clientHandle == activeHandle {
-            self.appendObject(color, "MicAudio       id = \(stream.id.hex)  handle = \(stream.clientHandle.hex)  ip = \(stream.ip)  port = \(stream.port)")
+            self.appendObject(color, "MicAudio       id = \(stream.id.hex)" +
+                                "  handle = \(stream.clientHandle.hex)" +
+                                "  ip = \(stream.ip)" +
+                                "  port = \(stream.port)")
         }
         // IqStream without a Panadapter
         for (_, stream) in radio.iqStreams where stream.clientHandle == activeHandle && stream.pan == 0 {
-            self.appendObject(color, "Iq             id = \(stream.id.hex)  channel = \(stream.daxIqChannel)  rate = \(stream.rate)  ip = \(stream.ip)  panadapter = -not assigned-")
+            self.appendObject(color, "Iq             id = \(stream.id.hex)" +
+                                "  channel = \(stream.daxIqChannel)" +
+                                "  rate = \(stream.rate)" +
+                                "  ip = \(stream.ip)" +
+                                "  panadapter = -not assigned-")
         }
         // TxAudioStream
         for (_, stream) in radio.txAudioStreams where stream.clientHandle == activeHandle {
-            self.appendObject(color, "TxAudio        id = \(stream.id.hex)  handle = \(stream.clientHandle.hex)  transmit = \(stream.transmit)  ip = \(stream.ip)  port = \(stream.port)")
+            self.appendObject(color, "TxAudio        id = \(stream.id.hex)" +
+                                "  handle = \(stream.clientHandle.hex)" +
+                                "  transmit = \(stream.transmit)" +
+                                "  ip = \(stream.ip)" +
+                                "  port = \(stream.port)")
         }
         // DaxRxAudioStream without a Slice
         for (_, stream) in radio.daxRxAudioStreams where stream.clientHandle == activeHandle && stream.slice == nil {
-            self.appendObject(color, "DaxRxAudio     id = \(stream.id.hex)  handle = \(stream.clientHandle.hex)  channel = \(stream.daxChannel)  ip = \(stream.ip)  slice = -not assigned-")
+            self.appendObject(color, "DaxRxAudio     id = \(stream.id.hex)" +
+                                "  handle = \(stream.clientHandle.hex)" +
+                                "  channel = \(stream.daxChannel)" +
+                                "  ip = \(stream.ip)" +
+                                "  slice = -not assigned-")
         }
         // DaxTxAudioStream
         for (_, stream) in radio.daxTxAudioStreams where stream.clientHandle == activeHandle {
-            self.appendObject(color, "DaxTxAudio     id = \(stream.id.hex)  handle = \(stream.clientHandle.hex)  isTransmit = \(stream.isTransmitChannel)")
+            self.appendObject(color, "DaxTxAudio     id = \(stream.id.hex)" +
+                                "  handle = \(stream.clientHandle.hex)" +
+                                "  isTransmit = \(stream.isTransmitChannel)")
         }
         // DaxIqStream without a Panadapter
         for (_, stream) in radio.daxIqStreams where stream.clientHandle == activeHandle && stream.pan == 0 {
-            self.appendObject(color, "DaxIq          id = \(stream.id.hex)  handle = \(stream.clientHandle.hex)  channel = \(stream.channel)  rate = \(stream.rate)  ip = \(stream.ip)  panadapter = -not assigned-")
+            self.appendObject(color, "DaxIq          id = \(stream.id.hex)" +
+                                "  handle = \(stream.clientHandle.hex)" +
+                                "  channel = \(stream.channel)" +
+                                "  rate = \(stream.rate)" +
+                                "  ip = \(stream.ip)" +
+                                "  panadapter = -not assigned-")
         }
         // RemoteRxAudioStream
         for (_, stream) in radio.remoteRxAudioStreams where stream.clientHandle == activeHandle {
-            self.appendObject(color, "RemoteRxAudio  id = \(stream.id.hex)  handle = \(stream.clientHandle.hex)  compression = \(stream.compression)")
+            self.appendObject(color, "RemoteRxAudio  id = \(stream.id.hex)" +
+                                "  handle = \(stream.clientHandle.hex)" +
+                                "  compression = \(stream.compression)")
         }
         // RemoteTxAudioStream
         for (_, stream) in radio.remoteTxAudioStreams where stream.clientHandle == activeHandle {
-            self.appendObject(color, "RemoteTxAudio  id = \(stream.id.hex)  handle = \(stream.clientHandle.hex)  compression = \(stream.compression)  ip = \(stream.ip)")
+            self.appendObject(color, "RemoteTxAudio  id = \(stream.id.hex)" +
+                                "  handle = \(stream.clientHandle.hex)" +
+                                "  compression = \(stream.compression)" +
+                                "  ip = \(stream.ip)")
         }
         // DaxMicAudioStream
         for (_, stream) in radio.daxMicAudioStreams where stream.clientHandle == activeHandle {
-            self.appendObject(color, "DaxMicAudio    id = \(stream.id.hex)  handle = \(stream.clientHandle.hex)  ip = \(stream.ip)")
+            self.appendObject(color, "DaxMicAudio    id = \(stream.id.hex)" +
+                                "  handle = \(stream.clientHandle.hex)" +
+                                "  ip = \(stream.ip)")
         }
-        
+    }
+    
+    func addPanadapterObjects(_ activeHandle: Handle, _ radio: Radio, _ color: UIColor) {
         // Panadapters & its accompanying objects
         for (_, panadapter) in radio.panadapters {
             if panadapter.clientHandle != activeHandle { continue }
             
             if radio.version.isNewApi {
-                self.appendObject(color, "Panadapter     handle = \(panadapter.clientHandle.hex)  id = \(panadapter.id.hex)  center = \(panadapter.center.hzToMhz)  bandwidth = \(panadapter.bandwidth.hzToMhz)")
+                self.appendObject(color, "Panadapter     handle = \(panadapter.clientHandle.hex)" +
+                                    "  id = \(panadapter.id.hex)" +
+                                    "  center = \(panadapter.center.hzToMhz)" +
+                                    "  bandwidth = \(panadapter.bandwidth.hzToMhz)")
             } else {
-                self.appendObject(color, "Panadapter     id = \(panadapter.id.hex)  center = \(panadapter.center.hzToMhz)  bandwidth = \(panadapter.bandwidth.hzToMhz)")
+                self.appendObject(color, "Panadapter     id = \(panadapter.id.hex)" +
+                                    "  center = \(panadapter.center.hzToMhz)" +
+                                    "  bandwidth = \(panadapter.bandwidth.hzToMhz)")
             }
             // Waterfall
             for (_, waterfall) in radio.waterfalls where panadapter.id == waterfall.panadapterId {
-                self.appendObject(color, "      Waterfall   id = \(waterfall.id.hex)  autoBlackEnabled = \(waterfall.autoBlackEnabled),  colorGain = \(waterfall.colorGain),  blackLevel = \(waterfall.blackLevel),  duration = \(waterfall.lineDuration)")
+                self.appendObject(color, "      Waterfall   id = \(waterfall.id.hex)" +
+                                    "  autoBlackEnabled = \(waterfall.autoBlackEnabled)" +
+                                    "  colorGain = \(waterfall.colorGain)" +
+                                    "  blackLevel = \(waterfall.blackLevel)" +
+                                    "  duration = \(waterfall.lineDuration)")
             }
             // IqStream
             for (_, iqStream) in radio.iqStreams where panadapter.id == iqStream.pan {
@@ -447,59 +571,68 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
             }
             // Slice(s) & their accompanying objects
             for (_, slice) in radio.slices where panadapter.id == slice.panadapterId {
-                self.appendObject(color, "      Slice       id = \(slice.id)  frequency = \(slice.frequency.hzToMhz)  mode = \(slice.mode.padTo(4))  filterLow = \(String(format: "% 5d", slice.filterLow))  filterHigh = \(String(format: "% 5d", slice.filterHigh))  active = \(slice.active)  locked = \(slice.locked)")
+                self.appendObject(color, "      Slice       id = \(slice.id)" +
+                                    "  frequency = \(slice.frequency.hzToMhz)" +
+                                    "  mode = \(slice.mode.padTo(4))" +
+                                    "  filterLow = \(String(format: "% 5d", slice.filterLow))" +
+                                    "  filterHigh = \(String(format: "% 5d", slice.filterHigh))" +
+                                    "  active = \(slice.active)" +
+                                    "  locked = \(slice.locked)")
                 
                 // AudioStream
                 for (_, stream) in radio.audioStreams where stream.slice?.id == slice.id {
-                    self.appendObject(color, "          Audio       id = \(stream.id.hex)  ip = \(stream.ip)  port = \(stream.port)")
+                    self.appendObject(color, "          Audio       id = \(stream.id.hex)" +
+                                        "  ip = \(stream.ip)" +
+                                        "  port = \(stream.port)")
                 }
                 // DaxRxAudioStream
                 for (_, stream) in radio.daxRxAudioStreams where stream.slice?.id == slice.id {
-                    self.appendObject(color, "          DaxAudio    id = \(stream.id.hex)  channel = \(stream.daxChannel)  ip = \(stream.ip)")
+                    self.appendObject(color, "          DaxAudio    id = \(stream.id.hex)" +
+                                        "  channel = \(stream.daxChannel)" +
+                                        "  ip = \(stream.ip)")
                 }
                 // Meters
                 for (_, meter) in radio.meters.sorted(by: { $0.value.id < $1.value.id }) {
                     if meter.source == "slc" && meter.group == String(slice.id) {
-                        self.appendObject(color, "          Meter id = \(meter.id)  name = \(meter.name.padTo(12))  units = \(meter.units.padTo(5))  low = \(String(format: "% 7.2f", meter.low))  high = \(String(format: "% 7.2f", meter.high))  fps = \(String(format: "% 3d", meter.fps))  desc = \(meter.desc)  ")
+                        self.appendObject(color, "          Meter id = \(meter.id)" +
+                                            "  name = \(meter.name.padTo(12))" +
+                                            "  units = \(meter.units.padTo(5))" +
+                                            "  low = \(String(format: "% 7.2f", meter.low))" +
+                                            "  high = \(String(format: "% 7.2f", meter.high))" +
+                                            "  fps = \(String(format: "% 3d", meter.fps))" +
+                                            "  desc = \(meter.desc)  ")
                     }
                 }
             }
         }
     }
-    
+
+    // ----------------------------------------------------------------------------
+    // MARK: - Observations
+
+    private func addObservations() {
+        NotificationCenter.default.addObserver(self, selector: #selector(self.showMainView), name: Notification.Name("showMainView"), object: nil)
+    }
+
+    @objc private func showMainView(notification: NSNotification){
+        DispatchQueue.main.async { self.showLogWindow = false }
+    }
+
     // ----------------------------------------------------------------------------
     // MARK: - RadioManagerDelegate
-
-    @Published var clientId             = ""      { didSet {Defaults.clientId = clientId} }
-    @Published var connectToFirstRadio  = false   { didSet {Defaults.connectToFirstRadio = connectToFirstRadio} }
-    @Published var enableGui            = false   { didSet {Defaults.enableGui = enableGui} }
-//    @Published var enableSmartLink      = false   { didSet {Defaults.enableSmartLink = enableSmartLink} }
-    @Published var enableSmartLink      = true
-    @Published var smartLinkAuth0Email  = ""      { didSet {Defaults.smartLinkAuth0Email = smartLinkAuth0Email} }
-    @Published var stationName          = Tester.kAppName
-
-    var defaultConnection : String {
-        get { Defaults.defaultConnection }
-        set { Defaults.defaultConnection = newValue }
-    }
-    var defaultGuiConnection : String {
-        get { Defaults.defaultGuiConnection }
-        set { Defaults.defaultGuiConnection = newValue }
-    }
-
+        
     public func willConnect() {
         if clearAtConnect { clearObjectsAndMessages() }
     }
-
+    
     public func willDisconnect() {
         if clearAtDisconnect { clearObjectsAndMessages() }
     }
-
+    
     // ----------------------------------------------------------------------------
-    // MARK: - ApiDelegate
+    // MARK: - ApiDelegate methods
     
     /// Process a sent message
-    ///
     /// - Parameter text:       text of the command
     ///
     public func sentMessage(_ text: String) {
@@ -517,12 +650,12 @@ final class Tester :  ObservableObject, ApiDelegate, RadioManagerDelegate, Logge
         // switch on the first character
         switch text[text.startIndex] {
         
-        case "C":   populateMessages(text)      // Commands
-        case "H":   populateMessages(text)      // Handle type
-        case "M":   populateMessages(text)      // Message Type
-        case "R":   parseReplyMessage(suffix)   // Reply Type
-        case "S":   populateMessages(text)      // Status type
-        case "V":   populateMessages(text)      // Version Type
+        case "C":   populateMessages(text)       // Commands
+        case "H":   populateMessages(text)       // Handle type
+        case "M":   populateMessages(text)       // Message Type
+        case "R":   parseReplyMessage(suffix)    // Reply Type
+        case "S":   populateMessages(text)       // Status type
+        case "V":   populateMessages(text)       // Version Type
         default:    populateMessages("ERROR: Unknown Message, \(text[text.startIndex] as! CVarArg)") // Unknown Type
         }
         refreshObjects()

@@ -10,44 +10,53 @@ import SwiftUI
 import xClientIos
 
 struct TopButtonsView: View {
-    @ObservedObject var tester : Tester
-    @ObservedObject var radioManager : RadioManager
-    
-    var body: some View {
-        
-        VStack(alignment: .leading) {
-            HStack (spacing: 20){
-                // Top row
-                Button(radioManager.isConnected ? "Stop" : "Start", action: {radioManager.startStop()} )
-                    .frame(width: 50, alignment: .leading)
-                    .help("Using the Default connection type")
-                
-                Toggle("As Gui", isOn: $tester.enableGui).frame(width: 110)
-                Toggle("Show Times", isOn: $tester.showTimestamps).frame(width: 150)
-                
-                Toggle("Show Pings", isOn: $tester.showPings).frame(width: 150)
-                                
-                Toggle("Show Replies", isOn: $tester.showReplies).frame(width: 160)
-                Spacer()
-                VStack {
-                    Text("SmartLink")
-                    Button(radioManager.smartLinkIsLoggedIn ? "Logout" : "Login", action: { radioManager.smartLinkLoginLogout() })
-                        .frame(width: 100)
-                        .disabled(radioManager.isConnected)
-                }.background(Color(.secondarySystemBackground))
-                Spacer()
-                Button("Defaults", action: { radioManager.chooseDefaults()})
-                    .disabled(radioManager.isConnected)
-            }
-        }
+    @ObservedObject var tester: Tester
+    @ObservedObject var radioManager: RadioManager
 
+    var body: some View {
+
+        HStack(spacing: 30) {
+            Button(radioManager.isConnected ? "Stop" : "Start") {
+                if radioManager.isConnected {
+                    radioManager.stop()
+                } else {
+                    radioManager.start()
+                }
+            }
+            .help("Using the Default connection type")
+            
+            HStack(spacing: 20) {
+                Toggle("Gui", isOn: $tester.enableGui).frame(width: 90)
+                Toggle("Times", isOn: $tester.showTimestamps).frame(width: 105)
+                Toggle("Pings", isOn: $tester.showPings).frame(width: 105)
+                Toggle("Replies", isOn: $tester.showReplies).frame(width: 115)
+            }
+            
+            Spacer()
+            HStack(spacing: 10) {
+                Text("SmartLink").frame(width: 90)
+                Button(action: {
+                    if radioManager.smartlinkIsLoggedIn {
+                        radioManager.smartlinkLogout()
+                    } else {
+                        radioManager.smartlinkLogin()
+                    }
+                }) {
+                    Text(radioManager.smartlinkIsLoggedIn ? "Logout" : "Login").frame(width: 75)
+                }
+                Button("Status") { radioManager.showSheet(.smartlinkStatus) }.frame(width: 50)
+            }.disabled(radioManager.isConnected)
+            
+            Spacer()
+            Button("Defaults") { radioManager.chooseDefaults() }.disabled(radioManager.isConnected)
+        }
     }
 }
 
 struct TopButtonsView_Previews: PreviewProvider {
-    
     static var previews: some View {
-        ContentView(tester: Tester(), radioManager: RadioManager(delegate: Tester() as RadioManagerDelegate) )
+        TopButtonsView(tester: Tester(), radioManager: RadioManager(delegate: Tester() as RadioManagerDelegate) )
+            .previewDevice("iPad (8th generation)")
             .previewLayout(.fixed(width: 2160 / 2.0, height: 1620 / 2.0))
     }
 }

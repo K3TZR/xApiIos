@@ -446,7 +446,7 @@
 			repositoryURL = "https://github.com/K3TZR/xClientIos.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.9.9;
+				minimumVersion = 1.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
