@@ -14,7 +14,6 @@
 		9122DBDF2586BA4B005D57ED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9122DBDE2586BA4B005D57ED /* Assets.xcassets */; };
 		9122DBE22586BA4B005D57ED /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9122DBE12586BA4B005D57ED /* Preview Assets.xcassets */; };
 		9122DBE52586BA4B005D57ED /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9122DBE32586BA4B005D57ED /* LaunchScreen.storyboard */; };
-		9122DBEF2586BA69005D57ED /* xClientIos in Frameworks */ = {isa = PBXBuildFile; productRef = 9122DBEE2586BA69005D57ED /* xClientIos */; };
 		9122DC122586F82E005D57ED /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9122DC112586F82E005D57ED /* ContentView.swift */; };
 		9122DC152586F8A5005D57ED /* TopButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9122DC142586F8A5005D57ED /* TopButtonsView.swift */; };
 		9122DC182586FB69005D57ED /* SendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9122DC172586FB69005D57ED /* SendView.swift */; };
@@ -25,6 +24,7 @@
 		9122DC2E258701AA005D57ED /* MessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9122DC2D258701AA005D57ED /* MessagesView.swift */; };
 		9122DC3125870293005D57ED /* BottomButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9122DC3025870293005D57ED /* BottomButtonsView.swift */; };
 		9122DC352587B176005D57ED /* AppExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9122DC342587B176005D57ED /* AppExtensions.swift */; };
+		91CAF17F25F53AFE009CF981 /* xClient in Frameworks */ = {isa = PBXBuildFile; productRef = 91CAF17E25F53AFE009CF981 /* xClient */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,7 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9122DBEF2586BA69005D57ED /* xClientIos in Frameworks */,
+				91CAF17F25F53AFE009CF981 /* xClient in Frameworks */,
 				9113BB81258AAC9200BB1080 /* NetworkExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -162,7 +162,7 @@
 			);
 			name = xApiIos;
 			packageProductDependencies = (
-				9122DBEE2586BA69005D57ED /* xClientIos */,
+				91CAF17E25F53AFE009CF981 /* xClient */,
 			);
 			productName = TestIos;
 			productReference = 9122DBD52586BA4A005D57ED /* xApiIos.app */;
@@ -192,7 +192,7 @@
 			);
 			mainGroup = 9122DBCC2586BA4A005D57ED;
 			packageReferences = (
-				9122DBED2586BA69005D57ED /* XCRemoteSwiftPackageReference "xClientIos" */,
+				91CAF17D25F53AFE009CF981 /* XCRemoteSwiftPackageReference "xClient" */,
 			);
 			productRefGroup = 9122DBD62586BA4A005D57ED /* Products */;
 			projectDirPath = "";
@@ -385,7 +385,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = net.k3tzr.xApiIos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -409,7 +409,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = net.k3tzr.xApiIos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -441,9 +441,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		9122DBED2586BA69005D57ED /* XCRemoteSwiftPackageReference "xClientIos" */ = {
+		91CAF17D25F53AFE009CF981 /* XCRemoteSwiftPackageReference "xClient" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/K3TZR/xClientIos.git";
+			repositoryURL = "https://github.com/K3TZR/xClient.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.0.0;
@@ -452,10 +452,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		9122DBEE2586BA69005D57ED /* xClientIos */ = {
+		91CAF17E25F53AFE009CF981 /* xClient */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9122DBED2586BA69005D57ED /* XCRemoteSwiftPackageReference "xClientIos" */;
-			productName = xClientIos;
+			package = 91CAF17D25F53AFE009CF981 /* XCRemoteSwiftPackageReference "xClient" */;
+			productName = xClient;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

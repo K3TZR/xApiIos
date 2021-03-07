@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import xClientIos
+import xClient
 
 struct SendView: View {
     @ObservedObject var tester: Tester
@@ -25,7 +25,7 @@ struct SendView: View {
             TextField("Command to send", text: $tester.cmdToSend)
                 .background(Color(.secondarySystemBackground))
                 .autocapitalization(.none)
-                .modifier(ClearButton(text: $tester.cmdToSend))
+                .modifier(ClearButton(boundText: $tester.cmdToSend))
 
             Spacer()
 
@@ -34,23 +34,23 @@ struct SendView: View {
     }
 }
 
-struct ClearButton: ViewModifier {
-    @Binding var text: String
-
-    public func body(content: Content) -> some View {
-        ZStack(alignment: .trailing) {
-            content
-
-            if !text.isEmpty {
-                Button(action: { self.text = "" }) {
-                    Image(systemName: "x.circle")
-                        .foregroundColor(Color(UIColor.label))
-                }
-                .padding(.trailing, 8)
-            }
-        }
-    }
-}
+//public struct ClearButton: ViewModifier {
+//    @Binding var text: String
+//
+//    public func body(content: Content) -> some View {
+//        ZStack(alignment: .trailing) {
+//            content
+//
+//            if !text.isEmpty {
+//                Button(action: { self.text = "" }) {
+//                    Image(systemName: "x.circle")
+//                        .foregroundColor(Color(UIColor.label))
+//                }
+//                .padding(.trailing, 8)
+//            }
+//        }
+//    }
+//}
 
 struct SendView_Previews: PreviewProvider {
 

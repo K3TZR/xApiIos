@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import xClientIos
+import xClient
 
 struct ContentView: View {
     @ObservedObject var tester: Tester
@@ -38,23 +38,16 @@ struct ContentView: View {
             }
             .padding(.horizontal)
 
-            // Sheet presentation
-            .sheet(item: $radioManager.activeSheet) { sheetType in
-                switch sheetType {
-                case .radioPicker:   RadioPickerView()
-                    .environmentObject(radioManager)
-                    .onDisappear(perform: {radioManager.connect(to: radioManager.pickerSelection)})
-                case .smartlinkAuthorization:    SmartlinkAuthorizationView()
-                    .environmentObject(radioManager)
-                    .onDisappear(perform: {print("TODO: Dismiss Auth0View")})
-                case .smartlinkStatus:    SmartlinkStatusView()
-                    .environmentObject(radioManager)
-                    .onDisappear(perform: {print("TODO: Dismiss Auth0View")})
-               }
+            .sheet(item: $radioManager.activeView) { activeView in
+                if activeView == .radioPicker {   //
+                    RadioPickerView().environmentObject(radioManager)
+                } else if activeView == .smartlinkAuthorization {
+                    SmartlinkAuthorizationView().environmentObject(radioManager)
+                } else {
+                    SmartlinkStatusView().environmentObject(radioManager)
+                }
             }
-
-            // CustomAlert presentation
-            .customAlert(isPresented: $radioManager.showAlert, radioManager.currentAlert)
+            .customAlertView(isPresented: $radioManager.showAlert, radioManager.currentAlert)
         }
     }
 }

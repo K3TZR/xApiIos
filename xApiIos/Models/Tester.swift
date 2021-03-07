@@ -9,7 +9,7 @@ import Foundation
 import xLib6000
 import SwiftyUserDefaults
 import SwiftUI
-import xClientIos
+import xClient
 
 typealias ObjectTuple = (color: UIColor, text: String)
 

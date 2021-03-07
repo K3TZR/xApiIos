@@ -17,9 +17,15 @@ Since this is an iOS / iPad app, no builds are included in releases. Until it is
 Please send any bugs / comments / questions to support@k3tzr.net
 
 ##### Credits
+[xClient](https://github.com/K3TZR/xClient.git)
+
 [xLib6000](https://github.com/K3TZR/xLib6000.git)
 
-[xClientIos](https://github.com/K3TZR/xClientIos.git)
+[SwiftyUserDefaults](https://github.com/sunshinejr/SwiftyUserDefaults.git)
+
+[XCGLogger](https://github.com/DaveWoodCom/XCGLogger.git)
+
+[JWTDecode](https://github.com/auth0/JWTDecode.swift.git)
 
 ##### Other software
 [![xSDR6000](https://img.shields.io/badge/K3TZR-xSDR6000-informational)]( https://github.com/K3TZR/xSDR6000) A SmartSDR-like client for the Mac.   
@@ -27,6 +33,9 @@ Please send any bugs / comments / questions to support@k3tzr.net
 [![W6OP](https://img.shields.io/badge/W6OP-xVoiceKeyer,_xCW-informational)](https://w6op.com) A Mac-based Voice Keyer and a CW Keyer.  
 
 ---
+##### 1.0.1 Release Notes
+* replaced xClientIos with xClient
+
 ##### 1.0.0 Release Notes
 * initial release
 * reworked to more closely resemble xApiMac
