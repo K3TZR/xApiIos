@@ -3,7 +3,7 @@
 #### API Explorer for Flex (TM) 6000 series radios (SwiftUI iOS version)
 
 ##### Built on:
-*  macOS 11.2.2
+*  macOS 11.2.3
 *  Xcode 12.4 (12D4e) 
 *  Swift 5.3 / SwiftUI
 
@@ -17,9 +17,11 @@ Since this is an iOS / iPad app, no builds are included in releases. Until it is
 Please send any bugs / comments / questions to support@k3tzr.net
 
 ##### Credits
-[xClient](https://github.com/K3TZR/xClient.git)
+[CocoaAsyncSocket](https://github.com/robbiehanson/CocoaAsyncSocket)
 
 [xLib6000](https://github.com/K3TZR/xLib6000.git)
+
+[xClient](https://github.com/K3TZR/xClient.git)
 
 [SwiftyUserDefaults](https://github.com/sunshinejr/SwiftyUserDefaults.git)
 
@@ -33,6 +35,13 @@ Please send any bugs / comments / questions to support@k3tzr.net
 [![W6OP](https://img.shields.io/badge/W6OP-xVoiceKeyer,_xCW-informational)](https://w6op.com) A Mac-based Voice Keyer and a CW Keyer.  
 
 ---
+##### 1.2.0 Release Notes
+* many small corrections
+* added SwiftLint phase
+* corrected swiftlint.yml
+* eliminated trailing whitespaces
+* bumped version to match xApiMac version
+
 ##### 1.0.1 Release Notes
 * replaced xClientIos with xClient
 

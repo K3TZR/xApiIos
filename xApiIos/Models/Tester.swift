@@ -49,20 +49,20 @@ enum FilterMessages: String, CaseIterable {
 final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
     // ----------------------------------------------------------------------------
     // MARK: - Published properties
-    
+
     @Published var clearAtConnect       = false { didSet {Defaults.clearAtConnect = clearAtConnect} }
     @Published var clearAtDisconnect    = false { didSet {Defaults.clearAtDisconnect = clearAtDisconnect} }
     @Published var clearOnSend          = false { didSet {Defaults.clearOnSend = clearOnSend} }
     @Published var cmdToSend            = ""
-    @Published var connectToFirstRadio  = false { didSet {Defaults.connectToFirstRadio = connectToFirstRadio} }
-    @Published var enableGui            = false { didSet {Defaults.enableGui = enableGui} }
+    @Published var connectToFirstRadioIsEnabled  = false { didSet {Defaults.connectToFirstRadioIsEnabled = connectToFirstRadioIsEnabled} }
+    @Published var guiIsEnabled            = false { didSet {Defaults.guiIsEnabled = guiIsEnabled} }
     @Published var enablePinging        = false { didSet {Defaults.enablePinging = enablePinging} }
     @Published var fontSize             = 12 { didSet {Defaults.fontSize = fontSize} }
     @Published var showLogWindow        = false
     @Published var showPings            = false { didSet {Defaults.showPings = showPings} }
     @Published var showReplies          = false { didSet {Defaults.showReplies = showReplies} }
     @Published var showTimestamps       = false { didSet {Defaults.showTimestamps = showTimestamps} }
-    
+
     @Published var filteredMessages                 = [Message]()
     @Published var messagesFilterBy: FilterMessages = .none { didSet {filterCollection(of: .messages) ; Defaults.messagesFilterBy = messagesFilterBy.rawValue }}
     @Published var messagesFilterText               = "" { didSet {filterCollection(of: .messages) ; Defaults.messagesFilterText = messagesFilterText }}
@@ -73,7 +73,7 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
 
     // ----------------------------------------------------------------------------
     // MARK: - Internal properties
-    
+
     var activePacket: DiscoveryPacket?
     var clientId: String? {
         get { Defaults.clientId }
@@ -88,21 +88,21 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
         set { Defaults.defaultGuiConnection = newValue }
     }
     var isConnected  = false
-    var smartlinkAuth0Email: String? {
-        get { Defaults.smartlinkAuth0Email }
-        set { Defaults.smartlinkAuth0Email = newValue }
+    var smartlinkEmail: String? {
+        get { Defaults.smartlinkEmail }
+        set { Defaults.smartlinkEmail = newValue }
     }
-    var smartlinkEnabled: Bool {
-        get { Defaults.smartlinkEnabled }
-        set { Defaults.smartlinkEnabled = newValue }
+    var smartlinkIsEnabled: Bool {
+        get { Defaults.smartlinkIsEnabled }
+        set { Defaults.smartlinkIsEnabled = newValue }
     }
     var smartlinkUserImage: UIImage?
     var smartlinkTestStatus = false
     var stationName  = ""
-    
+
     // ----------------------------------------------------------------------------
     // MARK: - Private properties
-    
+
     private var _api                  = Api.sharedInstance
     private var _commandsIndex        = 0
     private var _commandHistory       = [String]()
@@ -113,51 +113,51 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
     private var _packets: [DiscoveryPacket] { Discovery.sharedInstance.discoveryPackets }
     private var _previousCommand      = ""
     private var _startTimestamp: Date?
-    
+
     // ----------------------------------------------------------------------------
     // MARK: - Private properties with concurrency protection
-    
+
     private var messages: [Message] {
         get { return _objectQ.sync { _messages } }
         set { _objectQ.sync(flags: .barrier) { _messages = newValue } } }
-    
+
     private var objects: [Object] {
         get { return _objectQ.sync { _objects } }
         set { _objectQ.sync(flags: .barrier) { _objects = newValue } } }
-    
+
     // Backing store, do not use
     private var _messages       = [Message]()
     private var _objects        = [Object]()
-    
+
     // ----------------------------------------------------------------------------
     // MARK: - Initialization
-    
+
     init() {
         // initialize @Published properties
-        clearAtConnect       = Defaults.clearAtConnect
-        clearAtDisconnect    = Defaults.clearAtDisconnect
-        clearOnSend          = Defaults.clearOnSend
-        connectToFirstRadio  = Defaults.connectToFirstRadio
-        enableGui            = Defaults.enableGui
-        enablePinging        = Defaults.enablePinging
-        fontSize             = Defaults.fontSize
-        showPings            = Defaults.showPings
-        showReplies          = Defaults.showReplies
-        showTimestamps       = Defaults.showTimestamps
+        clearAtConnect                  = Defaults.clearAtConnect
+        clearAtDisconnect               = Defaults.clearAtDisconnect
+        clearOnSend                     = Defaults.clearOnSend
+        connectToFirstRadioIsEnabled    = Defaults.connectToFirstRadioIsEnabled
+        guiIsEnabled                    = Defaults.guiIsEnabled
+        enablePinging                   = Defaults.enablePinging
+        fontSize                        = Defaults.fontSize
+        showPings                       = Defaults.showPings
+        showReplies                     = Defaults.showReplies
+        showTimestamps                  = Defaults.showTimestamps
 
-        messagesFilterBy     = FilterMessages(rawValue: Defaults.messagesFilterBy) ?? .none
-        messagesFilterText   = Defaults.messagesFilterText
-        objectsFilterBy      = FilterObjects(rawValue: Defaults.objectsFilterBy) ?? .none
-        objectsFilterText    = Defaults.objectsFilterText
-        
+        messagesFilterBy                = FilterMessages(rawValue: Defaults.messagesFilterBy) ?? .none
+        messagesFilterText              = Defaults.messagesFilterText
+        objectsFilterBy                 = FilterObjects(rawValue: Defaults.objectsFilterBy) ?? .none
+        objectsFilterText               = Defaults.objectsFilterText
+
         // initialize and configure the Logger
-        _log = Logger.sharedInstance.logMessage
-        
+        _log = LogManager.sharedInstance.logMessage
+
         // give the Api access to our logger
-        LogProxy.sharedInstance.delegate = Logger.sharedInstance
-        
+        LogProxy.sharedInstance.delegate = LogManager.sharedInstance
+
 //        openLogWindow()
-        
+
         // is there a saved Client ID?
         if clientId == nil {
             // NO, assign one
@@ -169,13 +169,13 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
 
         // receive delegate actions from the Api
         _api.testerDelegate = self
-        
+
         addObservations()
     }
-    
+
     // ----------------------------------------------------------------------------
     // MARK: - Internal methods (Tester related)
-           
+
     /// A command  was sent to the Radio
     ///
     func sent(command: String) {
@@ -205,7 +205,7 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
 //            appDelegate.showLogWindow(showLogWindow)
 //        }
 //    }
-    
+
     /// Clear the object and messages areas
     ///
     func clearObjectsAndMessages() {
@@ -213,30 +213,30 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
             _messageNumber = 0
             messages.removeAll()
             filterCollection(of: .messages)
-            
+
             _objectNumber = 0
             objects.removeAll()
             filterCollection(of: .objects)
         }
     }
-    
+
     /// Send a command to the Radio
     ///
     func sendCommand(_ command: String) {
         guard command.isEmpty == false else { return }
-        
+
         // send the command to the Radio via TCP
         _api.radio!.sendCommand( command )
-        
+
         if command != _previousCommand { _commandHistory.append(command) }
-        
+
         _previousCommand = command
         _commandsIndex = _commandHistory.count - 1
-        
+
         // optionally clear the Command field
         if clearOnSend { DispatchQueue.main.async { self.cmdToSend = "" }}
     }
-    
+
     /// Adjust the font size larger or smaller (within limits)
     /// - Parameter larger:           larger?
     ///
@@ -251,17 +251,17 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
         }
         fontSize = newSize
     }
-    
+
     // ----------------------------------------------------------------------------
     // MARK: - Private methods (common to Messages and Objects)
-        
+
     /// Filter the message and object collections
     /// - Parameter type:     object type
     ///
     private func filterCollection(of type: FilterType) {
         if type == .messages {
             switch messagesFilterBy {
-            
+
             case .none:       filteredMessages = messages
             case .prefix:     filteredMessages =  messages.filter { $0.text.contains("|" + messagesFilterText) }
             case .includes:   filteredMessages =  messages.filter { $0.text.contains(messagesFilterText) }
@@ -273,7 +273,7 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
             }
         } else {
             switch objectsFilterBy {
-            
+
             case .none:       filteredObjects = objects
             case .prefix:     filteredObjects = objects.filter { $0.line.text.contains("|" + objectsFilterText) }
             case .includes:   filteredObjects = objects.filter { $0.line.text.contains(objectsFilterText) }
@@ -281,30 +281,30 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
             }
         }
     }
-    
+
     // ----------------------------------------------------------------------------
     // MARK: - Private methods (Messages-related)
-    
+
     /// Add an entry to the messages collection
     /// - Parameter text:       the text of the entry
     ///
     private func populateMessages(_ text: String) {
         DispatchQueue.main.async { [self] in
-            
+
             // guard that a session has been started
             if _startTimestamp == nil { _startTimestamp = Date() }
-            
+
             // add the Timestamp to the Text
             let timeInterval = Date().timeIntervalSince(_startTimestamp!)
             let stampedText = String( format: "%8.3f", timeInterval) + " " + text
-            
+
             _messageNumber += 1
             messages.append( Message(id: _messageNumber, text: stampedText))
-            
+
             filterCollection(of: .messages)
         }
     }
-    
+
     /// Parse a Reply message. format: <sequenceNumber>|<hexResponse>|<message>[|<debugOutput>]
     ///
     /// - parameter commandSuffix:    a Command Suffix
@@ -312,18 +312,18 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
     private func parseReplyMessage(_ commandSuffix: String) {
         // separate it into its components
         let components = commandSuffix.components(separatedBy: "|")
-        
+
         // ignore incorrectly formatted replies
         guard components.count >= 2 else { populateMessages("ERROR: R\(commandSuffix)") ; return }
-        
+
         if showReplies || components[1] != "0" || (components.count >= 3 && components[2] != "") {
             populateMessages("R\(commandSuffix)")
         }
     }
-    
+
     // ----------------------------------------------------------------------------
     // MARK: - Private methods (Objects-related)
-    
+
     /// Add an entry to the messages collection
     /// - Parameters:
     ///   - color:        an UIColor for the text
@@ -333,7 +333,7 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
         objects.append( Object(id: _objectNumber, line: (color, text)) )
         _objectNumber += 1
     }
-    
+
     /// Redraw the Objects
     ///
     private func refreshObjects() {
@@ -342,20 +342,20 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
             self.filterCollection(of: .objects)
         }
     }
-    
+
     /// Clear & recreate the Objects array
     ///
     private func populateObjects() {
         _objects.removeAll()
         _objectNumber = 0
-        
+
         var activeHandle: Handle = 0
-        
+
         // Radio
         if let radio = Api.sharedInstance.radio {
             self.objects.removeAll()
             var color = UIColor.systemGreen
-            
+
             // Show the connected Radio
             self.appendObject(color, "Radio (\(radio.packet.isWan ? "SmartLink" : "Local"))" +
                                 "  name=\(radio.nickname)  model=\(radio.packet.model)" +
@@ -370,17 +370,17 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
 
             // what verion is the Radio?
             if radio.version.isNewApi {
-                
+
                 // newApi
                 for packet in _packets where packet.isWan == activePacket?.isWan {
                     for guiClient in packet.guiClients {
-                        
+
                         activeHandle = guiClient.handle
-                        
+
                         color = UIColor.systemRed
-                        if enableGui == false && guiClient.clientId != nil && guiClient.clientId == radio.boundClientId { color = UIColor.systemPurple }
-                        if enableGui == true  && guiClient.handle == _api.connectionHandle { color = UIColor.systemPurple }
-                        
+                        if guiIsEnabled == false && guiClient.clientId != nil && guiClient.clientId == radio.boundClientId { color = UIColor.systemPurple }
+                        if guiIsEnabled == true  && guiClient.handle == _api.connectionHandle { color = UIColor.systemPurple }
+
                         self.appendObject(color, "Gui Client     station = \(guiClient.station.padTo(15))" +
                                             "  handle = \(guiClient.handle.hex)" +
                                             "  id = \(guiClient.clientId ?? "unknown")" +
@@ -393,14 +393,14 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
                         self.appendObject(UIColor.systemBlue, String(repeating: "-", count: 200))
                     }
                 }
-                
+
             } else {
                 // oldApi
                 self.addStreamObjects(activeHandle, radio, UIColor.label)
                 self.addPanadapterObjects(activeHandle, radio, UIColor.label)
             }
             color = UIColor.systemGray.withAlphaComponent(0.8)
-            
+
             // OpusAudioStream
             for (_, stream) in radio.opusAudioStreams {
                 self.appendObject(color, "Opus           id = \(stream.id.hex)" +
@@ -463,7 +463,7 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
 
         }
     }
-    
+
     /// Add stream objects to the Objects array
     /// - Parameters:
     ///   - activeHandle:       a connection handle
@@ -537,12 +537,12 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
                                 "  ip = \(stream.ip)")
         }
     }
-    
+
     func addPanadapterObjects(_ activeHandle: Handle, _ radio: Radio, _ color: UIColor) {
         // Panadapters & its accompanying objects
         for (_, panadapter) in radio.panadapters {
             if panadapter.clientHandle != activeHandle { continue }
-            
+
             if radio.version.isNewApi {
                 self.appendObject(color, "Panadapter     handle = \(panadapter.clientHandle.hex)" +
                                     "  id = \(panadapter.id.hex)" +
@@ -578,7 +578,7 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
                                     "  filterHigh = \(String(format: "% 5d", slice.filterHigh))" +
                                     "  active = \(slice.active)" +
                                     "  locked = \(slice.locked)")
-                
+
                 // AudioStream
                 for (_, stream) in radio.audioStreams where stream.slice?.id == slice.id {
                     self.appendObject(color, "          Audio       id = \(stream.id.hex)" +
@@ -614,24 +614,24 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(self.showMainView), name: Notification.Name("showMainView"), object: nil)
     }
 
-    @objc private func showMainView(notification: NSNotification){
+    @objc private func showMainView(notification: NSNotification) {
         DispatchQueue.main.async { self.showLogWindow = false }
     }
 
     // ----------------------------------------------------------------------------
     // MARK: - RadioManagerDelegate
-        
+
     public func willConnect() {
         if clearAtConnect { clearObjectsAndMessages() }
     }
-    
+
     public func willDisconnect() {
         if clearAtDisconnect { clearObjectsAndMessages() }
     }
-    
+
     // ----------------------------------------------------------------------------
     // MARK: - ApiDelegate methods
-    
+
     /// Process a sent message
     /// - Parameter text:       text of the command
     ///
@@ -646,17 +646,17 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
     public func receivedMessage(_ text: String) {
         // get all except the first character
         let suffix = String(text.dropFirst())
-        
+
         // switch on the first character
         switch text[text.startIndex] {
-        
+
         case "C":   populateMessages(text)       // Commands
         case "H":   populateMessages(text)       // Handle type
         case "M":   populateMessages(text)       // Message Type
         case "R":   parseReplyMessage(suffix)    // Reply Type
         case "S":   populateMessages(text)       // Status type
         case "V":   populateMessages(text)       // Version Type
-        default:    populateMessages("ERROR: Unknown Message, \(text[text.startIndex] as! CVarArg)") // Unknown Type
+        default:    populateMessages("Tester: Unknown Message type, \(text[text.startIndex])")
         }
         refreshObjects()
     }

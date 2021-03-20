@@ -34,7 +34,7 @@ struct SendView: View {
     }
 }
 
-//public struct ClearButton: ViewModifier {
+// public struct ClearButton: ViewModifier {
 //    @Binding var text: String
 //
 //    public func body(content: Content) -> some View {
@@ -50,7 +50,7 @@ struct SendView: View {
 //            }
 //        }
 //    }
-//}
+// }
 
 struct SendView_Previews: PreviewProvider {
 

@@ -16,7 +16,7 @@ struct ContentView: View {
 
         if tester.showLogWindow {
             // LOG VIEW
-            LoggerView().environmentObject(Logger.sharedInstance)
+            LoggerView().environmentObject(LogManager.sharedInstance)
             .padding(.horizontal)
             .padding(.bottom, 10)
 
@@ -41,8 +41,8 @@ struct ContentView: View {
             .sheet(item: $radioManager.activeView) { activeView in
                 if activeView == .radioPicker {   //
                     RadioPickerView().environmentObject(radioManager)
-                } else if activeView == .smartlinkAuthorization {
-                    SmartlinkAuthorizationView().environmentObject(radioManager)
+                } else if activeView == .smartlinkAuthentication {
+                    smartlinkAuthenticationView().environmentObject(radioManager)
                 } else {
                     SmartlinkStatusView().environmentObject(radioManager)
                 }

@@ -12,7 +12,7 @@ import SwiftUI
 import xClientIos
 
 extension Tester: ApiDelegate, RadioManagerDelegate {
-    
+
     // ----------------------------------------------------------------------------
     // MARK: - RadioManagerDelegate
 
@@ -24,18 +24,18 @@ extension Tester: ApiDelegate, RadioManagerDelegate {
         get { Defaults.defaultGuiConnection }
         set { Defaults.defaultGuiConnection = newValue }
     }
-    
+
     public func willConnect() {
         if clearAtConnect { clearObjectsAndMessages() }
     }
-    
+
     public func willDisconnect() {
         if clearAtDisconnect { clearObjectsAndMessages() }
     }
-    
+
     // ----------------------------------------------------------------------------
     // MARK: - ApiDelegate
-    
+
     /// Process a sent message
     ///
     /// - Parameter text:       text of the command
@@ -51,10 +51,10 @@ extension Tester: ApiDelegate, RadioManagerDelegate {
     public func receivedMessage(_ text: String) {
         // get all except the first character
         let suffix = String(text.dropFirst())
-        
+
         // switch on the first character
         switch text[text.startIndex] {
-        
+
         case "C":   populateMessages(text)      // Commands
         case "H":   populateMessages(text)      // Handle type
         case "M":   populateMessages(text)      // Message Type

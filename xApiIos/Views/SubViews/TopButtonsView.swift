@@ -24,14 +24,14 @@ struct TopButtonsView: View {
                 }
             }
             .help("Using the Default connection type")
-            
+
             HStack(spacing: 20) {
-                Toggle("Gui", isOn: $tester.enableGui).frame(width: 90)
+                Toggle("Gui", isOn: $tester.guiIsEnabled).frame(width: 90)
                 Toggle("Times", isOn: $tester.showTimestamps).frame(width: 105)
                 Toggle("Pings", isOn: $tester.showPings).frame(width: 105)
                 Toggle("Replies", isOn: $tester.showReplies).frame(width: 115)
             }
-            
+
             Spacer()
             HStack(spacing: 10) {
                 Text("SmartLink").frame(width: 90)
@@ -46,9 +46,9 @@ struct TopButtonsView: View {
                 }
                 Button("Status") { radioManager.showView(.smartlinkStatus) }.frame(width: 50)
             }.disabled(radioManager.isConnected)
-            
+
             Spacer()
-            Button("Defaults") { radioManager.chooseDefault() }.disabled(radioManager.isConnected)
+            Button("Defaults") { radioManager.defaultChoose() }.disabled(radioManager.isConnected)
         }
     }
 }

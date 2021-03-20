@@ -11,9 +11,9 @@ import SwiftUI
 struct ObjectsView: View {
     let objects: [Object]
     let fontSize: Int
-    
+
     var body: some View {
-        
+
         ScrollView([.horizontal, .vertical]) {
             VStack(alignment: .leading, spacing: 2) {
                 ForEach(objects) { object in

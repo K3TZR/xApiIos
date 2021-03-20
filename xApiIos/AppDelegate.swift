@@ -11,7 +11,7 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
     // ----------------------------------------------------------------------------
     // MARK: - Static properties
-    
+
     static let kAppName = "xApiIos"
     static let kDomainName = "net.k3tzr"
 
