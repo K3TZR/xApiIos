@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		9113BB81258AAC9200BB1080 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9113BB80258AAC9200BB1080 /* NetworkExtension.framework */; };
 		9113BB9F258FADDE00BB1080 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 9113BB9E258FADDE00BB1080 /* README.md */; };
-		9122DBD92586BA4A005D57ED /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9122DBD82586BA4A005D57ED /* AppDelegate.swift */; };
-		9122DBDB2586BA4A005D57ED /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9122DBDA2586BA4A005D57ED /* SceneDelegate.swift */; };
 		9122DBDF2586BA4B005D57ED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9122DBDE2586BA4B005D57ED /* Assets.xcassets */; };
 		9122DBE22586BA4B005D57ED /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9122DBE12586BA4B005D57ED /* Preview Assets.xcassets */; };
 		9122DBE52586BA4B005D57ED /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9122DBE32586BA4B005D57ED /* LaunchScreen.storyboard */; };
@@ -25,6 +23,7 @@
 		9122DC3125870293005D57ED /* BottomButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9122DC3025870293005D57ED /* BottomButtonsView.swift */; };
 		9122DC352587B176005D57ED /* AppExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9122DC342587B176005D57ED /* AppExtensions.swift */; };
 		91CAF17F25F53AFE009CF981 /* xClient in Frameworks */ = {isa = PBXBuildFile; productRef = 91CAF17E25F53AFE009CF981 /* xClient */; };
+		91FAC249260BB8BC004DCE43 /* XApiIos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91FAC248260BB8BC004DCE43 /* XApiIos.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,8 +31,6 @@
 		9113BB80258AAC9200BB1080 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		9113BB9E258FADDE00BB1080 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		9122DBD52586BA4A005D57ED /* xApiIos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = xApiIos.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		9122DBD82586BA4A005D57ED /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		9122DBDA2586BA4A005D57ED /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		9122DBDE2586BA4B005D57ED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9122DBE12586BA4B005D57ED /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		9122DBE42586BA4B005D57ED /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -48,6 +45,7 @@
 		9122DC2D258701AA005D57ED /* MessagesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessagesView.swift; sourceTree = "<group>"; };
 		9122DC3025870293005D57ED /* BottomButtonsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BottomButtonsView.swift; sourceTree = "<group>"; };
 		9122DC342587B176005D57ED /* AppExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppExtensions.swift; sourceTree = "<group>"; };
+		91FAC248260BB8BC004DCE43 /* XApiIos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XApiIos.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,12 +94,11 @@
 				9122DC342587B176005D57ED /* AppExtensions.swift */,
 				9122DC232586FDCB005D57ED /* Models */,
 				9122DBF12586BAF6005D57ED /* Views */,
-				9122DBD82586BA4A005D57ED /* AppDelegate.swift */,
-				9122DBDA2586BA4A005D57ED /* SceneDelegate.swift */,
 				9122DBDE2586BA4B005D57ED /* Assets.xcassets */,
 				9122DBE32586BA4B005D57ED /* LaunchScreen.storyboard */,
 				9122DBE62586BA4B005D57ED /* Info.plist */,
 				9122DBE02586BA4B005D57ED /* Preview Content */,
+				91FAC248260BB8BC004DCE43 /* XApiIos.swift */,
 			);
 			path = xApiIos;
 			sourceTree = "<group>";
@@ -248,8 +245,7 @@
 				9122DC282586FFD4005D57ED /* FiltersView.swift in Sources */,
 				9122DC152586F8A5005D57ED /* TopButtonsView.swift in Sources */,
 				9122DC352587B176005D57ED /* AppExtensions.swift in Sources */,
-				9122DBD92586BA4A005D57ED /* AppDelegate.swift in Sources */,
-				9122DBDB2586BA4A005D57ED /* SceneDelegate.swift in Sources */,
+				91FAC249260BB8BC004DCE43 /* XApiIos.swift in Sources */,
 				9122DC182586FB69005D57ED /* SendView.swift in Sources */,
 				9122DC2B258700DD005D57ED /* ObjectsView.swift in Sources */,
 				9122DC212586FD90005D57ED /* FilterView.swift in Sources */,
@@ -407,7 +403,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.2.3;
 				PRODUCT_BUNDLE_IDENTIFIER = net.k3tzr.xApiIos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -431,7 +427,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.2.3;
 				PRODUCT_BUNDLE_IDENTIFIER = net.k3tzr.xApiIos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -468,7 +464,7 @@
 			repositoryURL = "https://github.com/K3TZR/xClient.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.0;
+				minimumVersion = 1.2.3;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

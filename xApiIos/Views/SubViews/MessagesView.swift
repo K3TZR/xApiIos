@@ -53,7 +53,6 @@ struct MessagesView: View {
                 })
             }
         }
-
         .font(.system(size: CGFloat(fontSize), weight: .regular, design: .monospaced))
     }
 }

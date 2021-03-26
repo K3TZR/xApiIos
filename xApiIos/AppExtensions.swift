@@ -1,6 +1,6 @@
 //
 //  AppExtensions.swift
-//  xApiIos
+//
 //
 //  Created by Douglas Adams on 8/15/15.
 //  Copyright © 2018 Douglas Adams. All rights reserved.
@@ -24,7 +24,6 @@ extension DefaultsKeys {
     var clientId: DefaultsKey<String?> { .init("clientId") }
     var defaultConnection: DefaultsKey<String?> { .init("defaultConnection") }
     var defaultGuiConnection: DefaultsKey<String?> { .init("defaultGuiConnection") }
-    var enablePinging: DefaultsKey<Bool> { .init("enablePinging", defaultValue: false) }
     var fontMaxSize: DefaultsKey<Int> { .init("fontMaxSize", defaultValue: 20) }
     var fontMinSize: DefaultsKey<Int> { .init("fontMinSize", defaultValue: 8) }
     var fontName: DefaultsKey<String> { .init("fontName", defaultValue: "Monaco") }
@@ -39,7 +38,6 @@ extension DefaultsKeys {
     var showTimestamps: DefaultsKey<Bool> { .init("showTimestamps", defaultValue: false) }
     var smartlinkEmail: DefaultsKey<String?> { .init("smartlinkEmail") }
     var smartlinkIsEnabled: DefaultsKey<Bool> { .init("smartlinkIsEnabled", defaultValue: true) }
-//    var showLogWindow: DefaultsKey<Bool> { .init("showLogWindow", defaultValue: false) }
     var useLowBw: DefaultsKey<Bool> { .init("useLowBw", defaultValue: false) }
 }
 

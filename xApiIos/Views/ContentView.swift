@@ -12,45 +12,73 @@ struct ContentView: View {
     @ObservedObject var tester: Tester
     @ObservedObject var radioManager: RadioManager
 
-   var body: some View {
+    @State var selectedTab = 1
 
-        if tester.showLogWindow {
-            // LOG VIEW
-            LoggerView().environmentObject(LogManager.sharedInstance)
-            .padding(.horizontal)
-            .padding(.bottom, 10)
+    var body: some View {
 
-        } else {
-            // TESTER VIEW
-            VStack(alignment: .leading) {
-                TopButtonsView(tester: tester, radioManager: radioManager)
-                SendView(tester: tester, radioManager: radioManager)
-                FiltersView(tester: tester)
+        TabView(selection: $selectedTab) {
+            ApiTab(tester: tester, radioManager: radioManager)
+                .tabItem {
+                    Label("Api Tester", systemImage: "wifi")
+                }.tag(1)
 
-                Divider().frame(height: 2).background(Color(.opaqueSeparator))
-                ObjectsView(objects: tester.filteredObjects, fontSize: tester.fontSize)
-
-                Divider().frame(height: 4).background(Color(.systemBlue))
-                MessagesView(messages: tester.filteredMessages, showTimestamps: tester.showTimestamps, fontSize: tester.fontSize)
-
-                Divider().frame(height: 2).background(Color(.opaqueSeparator))
-                BottomButtonsView(tester: tester)
-            }
-            .padding(.horizontal)
-
-            .sheet(item: $radioManager.activeView) { activeView in
-                if activeView == .radioPicker {   //
-                    RadioPickerView().environmentObject(radioManager)
-                } else if activeView == .smartlinkAuthentication {
-                    smartlinkAuthenticationView().environmentObject(radioManager)
-                } else {
-                    SmartlinkStatusView().environmentObject(radioManager)
-                }
-            }
-            .customAlertView(isPresented: $radioManager.showAlert, radioManager.currentAlert)
+            LogTab(tester: tester, radioManager: radioManager)
+                .tabItem {
+                    Label("Log View", systemImage: "square.and.pencil")
+                }.tag(2)
         }
     }
 }
+
+struct ApiTab: View {
+    @ObservedObject var tester: Tester
+    @ObservedObject var radioManager: RadioManager
+
+    var body: some View {
+
+        VStack(alignment: .leading) {
+            TopButtonsView(tester: tester, radioManager: radioManager)
+            SendView(tester: tester, radioManager: radioManager)
+            FiltersView(tester: tester)
+
+            Divider().frame(height: 2).background(Color(.opaqueSeparator))
+            ObjectsView(objects: tester.filteredObjects, fontSize: tester.fontSize)
+
+            Divider().frame(height: 4).background(Color(.systemBlue))
+            MessagesView(messages: tester.filteredMessages, showTimestamps: tester.showTimestamps, fontSize: tester.fontSize)
+
+            Divider().frame(height: 2).background(Color(.opaqueSeparator))
+            BottomButtonsView(tester: tester, radioManager: radioManager)
+        }
+        .padding(.horizontal)
+
+        .sheet(item: $radioManager.activeView) { activeView in
+            if activeView == .radioPicker {   //
+                RadioPickerView().environmentObject(radioManager)
+            } else if activeView == .smartlinkAuthentication {
+                smartlinkAuthenticationView().environmentObject(radioManager)
+            } else {
+                SmartlinkStatusView().environmentObject(radioManager)
+            }
+        }
+        .padding(.bottom, 10)
+        .customAlertView(isPresented: $radioManager.showAlert, radioManager.currentAlert)
+    }
+}
+
+struct LogTab: View {
+    @ObservedObject var tester: Tester
+    @ObservedObject var radioManager: RadioManager
+
+    var body: some View {
+
+        LogView()
+            .environmentObject(radioManager)
+            .environmentObject(LogManager.sharedInstance)
+    }
+}
+
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
