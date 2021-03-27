@@ -59,7 +59,6 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
     @Published var clearAtDisconnect            = false { didSet {Defaults.clearAtDisconnect = clearAtDisconnect} }
     @Published var clearOnSend                  = false { didSet {Defaults.clearOnSend = clearOnSend} }
     @Published var cmdToSend                    = ""
-    @Published var connectToFirstRadioIsEnabled = false { didSet {Defaults.connectToFirstRadioIsEnabled = connectToFirstRadioIsEnabled} }
     @Published var guiIsEnabled                 = false { didSet {Defaults.guiIsEnabled = guiIsEnabled} }
     @Published var fontSize                     = 12 { didSet {Defaults.fontSize = fontSize} }
     @Published var showPings                    = false { didSet {Defaults.showPings = showPings} }
@@ -83,9 +82,9 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
         get { Defaults.clientId }
         set { Defaults.clientId = newValue }
     }
-    var defaultConnection: String? {
-        get { Defaults.defaultConnection }
-        set { Defaults.defaultConnection = newValue }
+    var defaultNonGuiConnection: String? {
+        get { Defaults.defaultNonGuiConnection }
+        set { Defaults.defaultNonGuiConnection = newValue }
     }
     var defaultGuiConnection: String? {
         get { Defaults.defaultGuiConnection }
@@ -135,7 +134,6 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
         clearAtConnect                  = Defaults.clearAtConnect
         clearAtDisconnect               = Defaults.clearAtDisconnect
         clearOnSend                     = Defaults.clearOnSend
-        connectToFirstRadioIsEnabled    = Defaults.connectToFirstRadioIsEnabled
         fontSize                        = Defaults.fontSize
         guiIsEnabled                    = Defaults.guiIsEnabled
         showPings                       = Defaults.showPings
@@ -328,7 +326,7 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
         // Radio
         if let radio = Api.sharedInstance.radio {
             self.objects.removeAll()
-            var color = Color.red
+            var color = Color.green
 
             // Show the connected Radio
             self.appendObject(color, "Radio (\(radio.packet.isWan ? "SmartLink" : "Local"))" +
@@ -340,7 +338,7 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
                                 "  gps=\(Api.sharedInstance.radio!.gpsPresent ? "Yes" : "No")" +
                                 "  scu's=\(Api.sharedInstance.radio!.numberOfScus)")
 
-            self.appendObject(Color.blue, String(repeating: "-", count: 200))
+            self.appendObject(Color.primary, String(repeating: "-", count: 200))
 
             // what verion is the Radio?
             if radio.version.isNewApi {
@@ -350,9 +348,9 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
 
                         activeHandle = guiClient.handle
 
-                        color = Color.red
-                        if guiIsEnabled == false && guiClient.clientId != nil && guiClient.clientId == radio.boundClientId { color = Color.purple }
-                        if guiIsEnabled == true  && guiClient.handle == _api.connectionHandle { color = Color.purple }
+                        color = Color.primary
+                        if guiIsEnabled == false && guiClient.clientId != nil && guiClient.clientId == radio.boundClientId { color = Color.red }
+                        if guiIsEnabled == true  && guiClient.handle == _api.connectionHandle { color = Color.red }
 
                         self.appendObject(color, "Gui Client     station = \(guiClient.station.padTo(15))" +
                                             "  handle = \(guiClient.handle.hex)" +
@@ -363,7 +361,7 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
 
                         self.addStreamObjects(activeHandle, radio, color)
                         self.addPanadapterObjects(activeHandle, radio, color)
-                        self.appendObject(Color.blue, String(repeating: "-", count: 200))
+                        self.appendObject(Color.primary, String(repeating: "-", count: 200))
                     }
                 }
 

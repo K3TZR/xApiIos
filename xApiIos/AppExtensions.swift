@@ -22,7 +22,7 @@ extension DefaultsKeys {
     var clearOnSend: DefaultsKey<Bool> { .init("clearOnSend", defaultValue: false) }
     var connectToFirstRadioIsEnabled: DefaultsKey<Bool> { .init("connectToFirstRadioIsEnabled", defaultValue: false) }
     var clientId: DefaultsKey<String?> { .init("clientId") }
-    var defaultConnection: DefaultsKey<String?> { .init("defaultConnection") }
+    var defaultNonGuiConnection: DefaultsKey<String?> { .init("defaultNonGuiConnection") }
     var defaultGuiConnection: DefaultsKey<String?> { .init("defaultGuiConnection") }
     var fontMaxSize: DefaultsKey<Int> { .init("fontMaxSize", defaultValue: 20) }
     var fontMinSize: DefaultsKey<Int> { .init("fontMinSize", defaultValue: 8) }
