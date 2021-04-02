@@ -12,8 +12,14 @@ struct FiltersView: View {
 
     var body: some View {
         HStack(spacing: 40) {
-            FilterView(filterType: .objects, tester: tester)
-            FilterView(filterType: .messages, tester: tester)
+            FilterView(selection: $tester.objectsFilterBy,
+                        text: $tester.objectsFilterText,
+                        choices: FilterObjects.allCases.map {$0.rawValue},
+                        message: "Filter Objects by")
+            FilterView(selection: $tester.messagesFilterBy,
+                        text: $tester.messagesFilterText,
+                        choices: FilterMessages.allCases.map {$0.rawValue},
+                        message: "Filter Messages by")
         }
     }
 }

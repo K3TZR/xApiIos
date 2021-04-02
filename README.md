@@ -35,6 +35,12 @@ Please send any bugs / comments / questions to support@k3tzr.net
 [![W6OP](https://img.shields.io/badge/W6OP-xVoiceKeyer,_xCW-informational)](https://w6op.com) A Mac-based Voice Keyer and a CW Keyer.  
 
 ---
+##### 1.2.5 Release Notes
+* changed ContentView to be a TabView
+* added ApiTesterView
+* added MeterManager & MetersView
+* refactored FilterView
+
 ##### 1.2.4 Release Notes
 * renamed defaultConnection to defaultNonGuiConnection
 * changed colors for object display

@@ -66,13 +66,13 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
     @Published var showTimestamps               = false { didSet {Defaults.showTimestamps = showTimestamps} }
     @Published var smartlinkIsEnabled           = false { didSet {Defaults.smartlinkIsEnabled = smartlinkIsEnabled} }
 
-    @Published var filteredMessages                 = [Message]()
-    @Published var messagesFilterBy: FilterMessages = .none { didSet {filterCollection(of: .messages) ; Defaults.messagesFilterBy = messagesFilterBy.rawValue }}
-    @Published var messagesFilterText               = "" { didSet {filterCollection(of: .messages) ; Defaults.messagesFilterText = messagesFilterText }}
+    @Published var filteredMessages             = [Message]()
+    @Published var messagesFilterBy: String     = "none" { didSet {filterCollection(of: .messages) ; Defaults.messagesFilterBy = messagesFilterBy }}
+    @Published var messagesFilterText           = "" { didSet {filterCollection(of: .messages) ; Defaults.messagesFilterText = messagesFilterText }}
     @Published var messagesScrollTo: CGPoint?
-    @Published var filteredObjects                  = [Object]()
-    @Published var objectsFilterBy: FilterObjects   = .none { didSet {filterCollection(of: .objects) ; Defaults.objectsFilterBy = objectsFilterBy.rawValue }}
-    @Published var objectsFilterText                = "" { didSet {filterCollection(of: .objects) ; Defaults.objectsFilterText = objectsFilterText}}
+    @Published var filteredObjects              = [Object]()
+    @Published var objectsFilterBy: String      = "none" { didSet {filterCollection(of: .objects) ; Defaults.objectsFilterBy = objectsFilterBy }}
+    @Published var objectsFilterText            = "" { didSet {filterCollection(of: .objects) ; Defaults.objectsFilterText = objectsFilterText}}
 
     // ----------------------------------------------------------------------------
     // MARK: - Internal properties
@@ -141,9 +141,9 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
         showTimestamps                  = Defaults.showTimestamps
         smartlinkIsEnabled              = Defaults.smartlinkIsEnabled
 
-        messagesFilterBy                = FilterMessages(rawValue: Defaults.messagesFilterBy) ?? .none
+        messagesFilterBy                = Defaults.messagesFilterBy
         messagesFilterText              = Defaults.messagesFilterText
-        objectsFilterBy                 = FilterObjects(rawValue: Defaults.objectsFilterBy) ?? .none
+        objectsFilterBy                 = Defaults.objectsFilterBy
         objectsFilterText               = Defaults.objectsFilterText
 
         // initialize and configure the Logger
@@ -235,22 +235,24 @@ final class Tester: ObservableObject, ApiDelegate, RadioManagerDelegate {
         if type == .messages {
             switch messagesFilterBy {
 
-            case .none:       filteredMessages = messages
-            case .prefix:     filteredMessages =  messages.filter { $0.text.contains("|" + messagesFilterText) }
-            case .includes:   filteredMessages =  messages.filter { $0.text.contains(messagesFilterText) }
-            case .excludes:   filteredMessages =  messages.filter { !$0.text.contains(messagesFilterText) }
-            case .command:    filteredMessages =  messages.filter { $0.text.dropFirst(9).prefix(1) == "C" }
-            case .S0:         filteredMessages =  messages.filter { $0.text.dropFirst(9).prefix(2) == "S0" }
-            case .status:     filteredMessages =  messages.filter { $0.text.dropFirst(9).prefix(1) == "S" && $0.text.dropFirst(10).prefix(1) != "0"}
-            case .reply:      filteredMessages =  messages.filter { $0.text.dropFirst(9).prefix(1) == "R" }
+            case FilterMessages.none.rawValue:       filteredMessages = messages
+            case FilterMessages.prefix.rawValue:     filteredMessages =  messages.filter { $0.text.contains("|" + messagesFilterText) }
+            case FilterMessages.includes.rawValue:   filteredMessages =  messages.filter { $0.text.contains(messagesFilterText) }
+            case FilterMessages.excludes.rawValue:   filteredMessages =  messages.filter { !$0.text.contains(messagesFilterText) }
+            case FilterMessages.command.rawValue:    filteredMessages =  messages.filter { $0.text.dropFirst(9).prefix(1) == "C" }
+            case FilterMessages.S0.rawValue:         filteredMessages =  messages.filter { $0.text.dropFirst(9).prefix(2) == "S0" }
+            case FilterMessages.status.rawValue:     filteredMessages =  messages.filter { $0.text.dropFirst(9).prefix(1) == "S" && $0.text.dropFirst(10).prefix(1) != "0"}
+            case FilterMessages.reply.rawValue:      filteredMessages =  messages.filter { $0.text.dropFirst(9).prefix(1) == "R" }
+            default: break
             }
         } else {
             switch objectsFilterBy {
 
-            case .none:       filteredObjects = objects
-            case .prefix:     filteredObjects = objects.filter { $0.line.text.contains("|" + objectsFilterText) }
-            case .includes:   filteredObjects = objects.filter { $0.line.text.contains(objectsFilterText) }
-            case .excludes:   filteredObjects = objects.filter { !$0.line.text.contains(objectsFilterText) }
+            case FilterObjects.none.rawValue:       filteredObjects = objects
+            case FilterObjects.prefix.rawValue:     filteredObjects = objects.filter { $0.line.text.contains("|" + objectsFilterText) }
+            case FilterObjects.includes.rawValue:   filteredObjects = objects.filter { $0.line.text.contains(objectsFilterText) }
+            case FilterObjects.excludes.rawValue:   filteredObjects = objects.filter { !$0.line.text.contains(objectsFilterText) }
+            default: break
             }
         }
     }

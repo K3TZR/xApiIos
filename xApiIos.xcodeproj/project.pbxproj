@@ -22,6 +22,9 @@
 		9122DC2E258701AA005D57ED /* MessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9122DC2D258701AA005D57ED /* MessagesView.swift */; };
 		9122DC3125870293005D57ED /* BottomButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9122DC3025870293005D57ED /* BottomButtonsView.swift */; };
 		9122DC352587B176005D57ED /* AppExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9122DC342587B176005D57ED /* AppExtensions.swift */; };
+		919DBBFD2616954C00BC4AFA /* MeterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919DBBFC2616954C00BC4AFA /* MeterManager.swift */; };
+		919DBC00261695BB00BC4AFA /* ApiTesterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919DBBFF261695BB00BC4AFA /* ApiTesterView.swift */; };
+		919DBC03261695F500BC4AFA /* MetersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919DBC02261695F500BC4AFA /* MetersView.swift */; };
 		91CAF17F25F53AFE009CF981 /* xClient in Frameworks */ = {isa = PBXBuildFile; productRef = 91CAF17E25F53AFE009CF981 /* xClient */; };
 		91FAC249260BB8BC004DCE43 /* XApiIos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91FAC248260BB8BC004DCE43 /* XApiIos.swift */; };
 /* End PBXBuildFile section */
@@ -45,6 +48,9 @@
 		9122DC2D258701AA005D57ED /* MessagesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessagesView.swift; sourceTree = "<group>"; };
 		9122DC3025870293005D57ED /* BottomButtonsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BottomButtonsView.swift; sourceTree = "<group>"; };
 		9122DC342587B176005D57ED /* AppExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppExtensions.swift; sourceTree = "<group>"; };
+		919DBBFC2616954C00BC4AFA /* MeterManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeterManager.swift; sourceTree = "<group>"; };
+		919DBBFF261695BB00BC4AFA /* ApiTesterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiTesterView.swift; sourceTree = "<group>"; };
+		919DBC02261695F500BC4AFA /* MetersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetersView.swift; sourceTree = "<group>"; };
 		91FAC248260BB8BC004DCE43 /* XApiIos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XApiIos.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -123,6 +129,7 @@
 		9122DC232586FDCB005D57ED /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				919DBBFC2616954C00BC4AFA /* MeterManager.swift */,
 				9122DC242586FDCB005D57ED /* Tester.swift */,
 			);
 			path = Models;
@@ -138,6 +145,8 @@
 				9122DC2A258700DD005D57ED /* ObjectsView.swift */,
 				9122DC172586FB69005D57ED /* SendView.swift */,
 				9122DC142586F8A5005D57ED /* TopButtonsView.swift */,
+				919DBBFF261695BB00BC4AFA /* ApiTesterView.swift */,
+				919DBC02261695F500BC4AFA /* MetersView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -243,6 +252,7 @@
 			files = (
 				9122DC2E258701AA005D57ED /* MessagesView.swift in Sources */,
 				9122DC282586FFD4005D57ED /* FiltersView.swift in Sources */,
+				919DBC00261695BB00BC4AFA /* ApiTesterView.swift in Sources */,
 				9122DC152586F8A5005D57ED /* TopButtonsView.swift in Sources */,
 				9122DC352587B176005D57ED /* AppExtensions.swift in Sources */,
 				91FAC249260BB8BC004DCE43 /* XApiIos.swift in Sources */,
@@ -250,6 +260,8 @@
 				9122DC2B258700DD005D57ED /* ObjectsView.swift in Sources */,
 				9122DC212586FD90005D57ED /* FilterView.swift in Sources */,
 				9122DC3125870293005D57ED /* BottomButtonsView.swift in Sources */,
+				919DBC03261695F500BC4AFA /* MetersView.swift in Sources */,
+				919DBBFD2616954C00BC4AFA /* MeterManager.swift in Sources */,
 				9122DC122586F82E005D57ED /* ContentView.swift in Sources */,
 				9122DC252586FDCB005D57ED /* Tester.swift in Sources */,
 			);
@@ -403,7 +415,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.4;
+				MARKETING_VERSION = 1.2.5;
 				PRODUCT_BUNDLE_IDENTIFIER = net.k3tzr.xApiIos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -427,7 +439,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.4;
+				MARKETING_VERSION = 1.2.5;
 				PRODUCT_BUNDLE_IDENTIFIER = net.k3tzr.xApiIos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -464,7 +476,7 @@
 			repositoryURL = "https://github.com/K3TZR/xClient.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.4;
+				minimumVersion = 1.2.5;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

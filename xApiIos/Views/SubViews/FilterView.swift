@@ -1,6 +1,6 @@
 //
 //  FilterView.swift
-//  xApiIos
+//  xApiMac
 //
 //  Created by Douglas Adams on 8/10/20.
 //
@@ -9,44 +9,38 @@ import SwiftUI
 import xClient
 
 struct FilterView: View {
-    let filterType: FilterType
-    @ObservedObject var tester: Tester
+    @Binding var selection: String
+    @Binding var text: String
+    let choices: [String]
+    let message: String
 
     var body: some View {
 
         HStack {
-            if filterType == .messages {
-                Text("Filter messages by")
-                Picker(tester.messagesFilterBy.rawValue, selection: $tester.messagesFilterBy) {
-                    ForEach(FilterMessages.allCases, id: \.self) {
-                        Text($0.rawValue)
-                    }
-                }.frame(width: 90)
+            Text(message)
+            Picker(selection, selection: $selection) {
+                ForEach(choices, id: \.self) {
+                    Text($0)
+                }
+            }.frame(width: 100)
 
-            } else {
-                Text("Filter objects by")
-                Picker(tester.objectsFilterBy.rawValue, selection: $tester.objectsFilterBy) {
-                    ForEach(FilterObjects.allCases, id: \.self) {
-                        Text($0.rawValue)
-                    }
-                }.frame(width: 90)
-
-            }
-            TextField("Filter text", text: filterType == .messages ? $tester.messagesFilterText : $tester.objectsFilterText)
-                .background(Color(.secondarySystemBackground))
-                .autocapitalization(.none)
-                .modifier(ClearButton(boundText: filterType == .messages ? $tester.messagesFilterText : $tester.objectsFilterText))
+            TextField("Filter text", text: $text)
+                .modifier(ClearButton(boundText: $text))
         }
         .pickerStyle(MenuPickerStyle())
     }
 }
 
-struct FilterView_Previews: PreviewProvider {
-
-    static var previews: some View {
-        FilterView(filterType: .messages, tester: Tester())
-//            .environmentObject(Tester())
-            .previewDevice("iPad (8th generation)")
-            .previewLayout(.fixed(width: 2160 / 2.0, height: 1620 / 2.0))
-    }
-}
+// struct FilterView_Previews: PreviewProvider {
+//
+//    @State var filterBy: String = "none"
+//    @State var filterText: String = "sample filter text"
+//    @State var selection: String = "none"
+//
+//    static var previews: some View {
+//        FilterView(selection: $filterBy,
+//                    text: $filterText,
+//                    choices: FilterObjects.allCases.map {$0.rawValue},
+//                    message: "Filter Objects by")
+//    }
+// }

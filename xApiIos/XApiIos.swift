@@ -13,16 +13,18 @@ struct XApiIos: App {
 
     var tester: Tester
     var radioManager: RadioManager
+    var meterManager: MeterManager
 
     init() {
         tester = Tester()
         radioManager = RadioManager(delegate: tester as RadioManagerDelegate)
+        meterManager = MeterManager()
     }
 
     var body: some Scene {
 
         WindowGroup {
-            ContentView(tester: tester, radioManager: radioManager)
+            ContentView(tester: tester, radioManager: radioManager, meterManager: meterManager, selectedTab: 1)
         }
     }
 }
