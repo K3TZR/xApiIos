@@ -34,24 +34,6 @@ struct SendView: View {
     }
 }
 
-// public struct ClearButton: ViewModifier {
-//    @Binding var text: String
-//
-//    public func body(content: Content) -> some View {
-//        ZStack(alignment: .trailing) {
-//            content
-//
-//            if !text.isEmpty {
-//                Button(action: { self.text = "" }) {
-//                    Image(systemName: "x.circle")
-//                        .foregroundColor(Color(UIColor.label))
-//                }
-//                .padding(.trailing, 8)
-//            }
-//        }
-//    }
-// }
-
 struct SendView_Previews: PreviewProvider {
 
     static var previews: some View {

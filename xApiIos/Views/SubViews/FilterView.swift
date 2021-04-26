@@ -31,16 +31,14 @@ struct FilterView: View {
     }
 }
 
-// struct FilterView_Previews: PreviewProvider {
-//
-//    @State var filterBy: String = "none"
-//    @State var filterText: String = "sample filter text"
-//    @State var selection: String = "none"
-//
-//    static var previews: some View {
-//        FilterView(selection: $filterBy,
-//                    text: $filterText,
-//                    choices: FilterObjects.allCases.map {$0.rawValue},
-//                    message: "Filter Objects by")
-//    }
-// }
+struct FilterView_Previews: PreviewProvider {
+
+    static var previews: some View {
+        FilterView(selection: .constant("none"),
+                   text: .constant(""),
+                    choices: FilterObjects.allCases.map {$0.rawValue},
+                    message: "Filter Objects by")
+            .previewDevice("iPad (8th generation)")
+            .previewLayout(.fixed(width: 2160 / 2.0, height: 1620 / 2.0))
+    }
+}

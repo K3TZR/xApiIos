@@ -23,22 +23,20 @@ struct MetersView: View {
     }
 }
 
-struct MetersView_Previews: PreviewProvider {
-    static var previews: some View {
-        MetersView()
-            .environmentObject(MeterManager())
-            .previewDevice("iPad (8th generation)")
-            .previewLayout(.fixed(width: 2160 / 2.0, height: 1620 / 2.0))
-
-    }
-}
-
 struct MetersHeaderView: View {
     @EnvironmentObject var meterManager: MeterManager
 
     var body: some View {
         VStack(spacing: 20) {
             Text("NOTE: Meter display is being refreshed once a second, actual data rate may be faster or slower").foregroundColor(.red)
+            HStack {
+                Text("Value < Low")
+                Text("YELLOW").foregroundColor(.yellow).padding(.trailing, 20)
+                Text("Value within limits")
+                Text("GREEN").foregroundColor(.green).padding(.trailing, 20)
+                Text("Value > High")
+                Text("RED").foregroundColor(.red).padding(.trailing, 20)
+            }
             FilterView(selection: $meterManager.filterSelection,
                        text: $meterManager.filterText,
                        choices: MeterManager.MeterFilter.allCases.map {$0.rawValue},
@@ -103,5 +101,14 @@ struct MetersListView: View {
                 }
             }
         }
+    }
+}
+
+struct MetersView_Previews: PreviewProvider {
+    static var previews: some View {
+        MetersView()
+            .environmentObject(MeterManager())
+            .previewDevice("iPad (8th generation)")
+            .previewLayout(.fixed(width: 2160 / 2.0, height: 1620 / 2.0))
     }
 }
